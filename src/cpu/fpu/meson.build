@@ -1,0 +1,27 @@
+fpu_sources = [
+            'f2xm1.cc',
+            'ferr.cc',
+            'fpatan.cc',
+            'fprem.cc',
+            'fpu.cc',
+            'fpu_arith.cc',
+            'fpu_cmov.cc',
+            'fpu_compare.cc',
+            'fpu_const.cc',
+            'fpu_load_store.cc',
+            'fpu_misc.cc',
+            'fpu_trans.cc',
+            'fsincos.cc',
+            'fyl2x.cc',
+            'poly.cc',
+            'softfloat-muladd.cc',
+            'softfloat-round-pack.cc',
+            'softfloat-specialize.cc',
+            'softfloat.cc',
+            'softfloat16.cc',
+            'softfloatx80.cc']
+
+fpu_library = static_library('fpu',
+                        fpu_sources,
+                        include_directories: incdir,
+                        override_options: ['warning_level=2'])
