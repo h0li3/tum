@@ -81,19 +81,7 @@ enum {
 
 static bx_cpuid_t *cpuid_factory(BX_CPU_C *cpu)
 {
-  //unsigned cpu_model = SIM->get_param_enum(BXPN_CPU_MODEL)->get();
-  unsigned cpu_model = 3;
-
-#define bx_define_cpudb(model) \
-  case bx_cpudb_##model:       \
-    return create_ ##model##_cpuid(cpu);
-
-  switch(cpu_model) {
-#include "cpudb.h"
-  default:
-    return 0;
-  }
-#undef bx_define_cpudb
+	return 0;
 }
 
 #endif
@@ -121,7 +109,7 @@ void BX_CPU_C::initialize(void)
   xsave_xrestor_init();
 #endif
 
-  init_SMRAM();
+  //init_SMRAM();
 }
 
 BX_CPU_C::~BX_CPU_C()
