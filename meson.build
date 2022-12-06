@@ -10,6 +10,7 @@ subdir('src')
 sources = ['src/main.cc',
            'src/memory/memory.cc',
            'src/memory/misc_mem.cc',
+           'src/memory/memory_map.cc',
            'src/osdep.cc',
            'src/logio.cc',]
 

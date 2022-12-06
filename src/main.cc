@@ -2,6 +2,7 @@
 #include "bochs.h"
 #include "cpu/cpu.h"
 #include "memory/memory-bochs.h"
+#include "memory/memory_map.h"
 
 BX_MEM_C bx_mem;
 BX_CPU_C bx_cpu;
@@ -72,7 +73,7 @@ int main(int argc, char** argv)
 
     bx_mem.init_memory(0, 1024 * 1024 * 64, 4096);	// 早期开发测试用，分配64MB大块物理内存
 
-	// bx_cpu.cr0.set_PG(1);	// 开启分页模式后，所有内存访问会先经过MMU将线性地址翻译为物理地址，如果访问的4k页面不存在，就会产生#PF(page fault)异常，内存管理器负责判断这个4k页面是否是已经分配的内存，并进行页面分配或者结束执行报告内存错误
+	bx_cpu.cr0.set_PG(1);	// 开启分页模式后，所有内存访问会先经过MMU将线性地址翻译为物理地址，如果访问的4k页面不存在，就会产生#PF(page fault)异常，内存管理器负责判断这个4k页面是否是已经分配的内存，并进行页面分配或者结束执行报告内存错误
 	// 测试时不开启分页模式，我们还没有设置#PG异常的处理中断
 
 	auto* ib = (Bit8u*)bx_cpu.getHostMemAddr(0x8000, 1);	// 直接获取模拟器的0x1000地址对应的物理内存地址
@@ -93,6 +94,12 @@ int main(int argc, char** argv)
 		// RAX应该等于0x3322
 		printf("rax = %lx\n", bx_cpu.gen_reg[BX_64BIT_REG_RAX].rrx);
 	}
+
+	tum::MemoryMap memmap;
+	memmap.insert_memory_area(new tum::memory_area_t {0x2471000, 2, 1});
+	auto* area = memmap.find_memory_area(0x2471000 + 4096);
+	if (area)
+		printf("base = 0x%lx, size = 0x%lx\n", area->base, area->get_size());
 }
 
 int bx_atexit()

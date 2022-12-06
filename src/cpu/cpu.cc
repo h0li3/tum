@@ -469,7 +469,6 @@ void BX_CPU_C::prefetch(void)
 
   INC_ICACHE_STAT(iCachePrefetch);
 
-#if BX_SUPPORT_X86_64
   if (long64_mode()) {
     if (! IsCanonical(RIP)) {
       BX_ERROR(("prefetch: #GP(0): RIP crossed canonical boundary"));
@@ -485,18 +484,7 @@ void BX_CPU_C::prefetch(void)
     BX_CPU_THIS_PTR eipPageWindowSize = 4096;
   }
   else
-#endif
   {
-
-#if BX_CPU_LEVEL >= 5
-    if (USER_PL && BX_CPU_THIS_PTR get_VIP() && BX_CPU_THIS_PTR get_VIF()) {
-      if (BX_CPU_THIS_PTR cr4.get_PVI() | (v8086_mode() && BX_CPU_THIS_PTR cr4.get_VME())) {
-        BX_ERROR(("prefetch: inconsistent VME state"));
-        exception(BX_GP_EXCEPTION, 0);
-      }
-    }
-#endif
-
     BX_CLEAR_64BIT_HIGH(BX_64BIT_REG_RIP); /* avoid 32-bit EIP wrap */
     laddr = get_laddr32(BX_SEG_REG_CS, EIP);
     pageOffset = PAGE_OFFSET(laddr);

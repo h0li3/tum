@@ -1,24 +1,3 @@
-/////////////////////////////////////////////////////////////////////////
-// $Id$
-/////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (C) 2001-2020  The Bochs Project
-//
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA B 02110-1301 USA
-/////////////////////////////////////////////////////////////////////////
-
 #ifndef BX_CPU_H
 #define BX_CPU_H
 
@@ -4213,7 +4192,7 @@ public: // for now...
 #endif
   BX_SMF bool  dbg_xlate_linear2phy(bx_address linear, bx_phy_address *phy, bx_address *lpf_mask = 0, bool verbose = 0, bool nested_walk = 0);
 #if BX_LARGE_RAMFILE
-  BX_SMF bool check_addr_in_tlb_buffers(const Bit8u *addr, const Bit8u *end);
+  bool check_addr_in_tlb_buffers(const Bit8u *addr, const Bit8u *end);
 #endif
   BX_SMF void atexit(void);
 
@@ -4443,21 +4422,9 @@ public: // for now...
 
   // linear address for translate_linear expected to be canonical !
   BX_SMF bx_phy_address translate_linear(bx_TLB_entry *entry, bx_address laddr, unsigned user, unsigned rw);
-  BX_SMF bx_phy_address translate_linear_legacy(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw);
   BX_SMF void update_access_dirty(bx_phy_address *entry_addr, Bit32u *entry, BxMemtype *entry_memtype, unsigned leaf, unsigned write);
-#if BX_CPU_LEVEL >= 6
-  BX_SMF bx_phy_address translate_linear_load_PDPTR(bx_address laddr, unsigned user, unsigned rw);
-  BX_SMF bx_phy_address translate_linear_PAE(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw);
-  BX_SMF int check_entry_PAE(const char *s, Bit64u entry, Bit64u reserved, unsigned rw, bool *nx_fault);
-  BX_SMF void update_access_dirty_PAE(bx_phy_address *entry_addr, Bit64u *entry, BxMemtype *entry_memtype, unsigned max_level, unsigned leaf, unsigned write);
-#endif
 #if BX_SUPPORT_X86_64
-  BX_SMF bx_phy_address translate_linear_long_mode(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw);
-#endif
-#if BX_SUPPORT_MEMTYPE
-  BX_SMF BxMemtype memtype_by_mtrr(bx_phy_address paddr) BX_CPP_AttrRegparmN(1);
-  BX_SMF BxMemtype memtype_by_pat(unsigned pat) BX_CPP_AttrRegparmN(1);
-  BX_SMF BxMemtype resolve_memtype(BxMemtype mtrr_memtype, BxMemtype pat_memtype = BX_MEMTYPE_WB) BX_CPP_AttrRegparmN(2);
+  bx_phy_address translate_linear_long_mode(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw);
 #endif
 
 #if BX_CPU_LEVEL >= 6
