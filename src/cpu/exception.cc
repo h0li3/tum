@@ -25,7 +25,7 @@
 #include "cpu.h"
 #define LOG_THIS BX_CPU_THIS_PTR
 
-#if BX_SUPPORT_X86_64==0
+#if BX_SUPPORT_X86_64 == 0
 // Make life easier merging cpu64 & cpu code.
 #define RIP EIP
 #define RSP ESP
@@ -131,13 +131,6 @@ void BX_CPU_C::long_mode_int(Bit8u vector, bool soft_int, bool push_error, Bit16
   }
 
   Bit64u RSP_for_cpl_x;
-#if BX_SUPPORT_CET
-  bx_address new_SSP = 0; // keep warning silent
-  unsigned old_SS_DPL = BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.dpl;
-  unsigned old_CPL = CPL;
-  bx_address return_LIP = get_laddr(BX_SEG_REG_CS, RIP);
-  bool check_ss_token = true;
-#endif
 
   Bit64u old_CS  = BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].selector.value;
   Bit64u old_RIP = RIP;
@@ -154,18 +147,9 @@ void BX_CPU_C::long_mode_int(Bit8u vector, bool soft_int, bool push_error, Bit16
     if (ist > 0) {
       BX_DEBUG(("interrupt(long mode): trap to IST, vector = %d", ist));
       //RSP_for_cpl_x = get_RSP_from_TSS(ist+3);
-#if BX_SUPPORT_CET
-      if (ShadowStackEnabled(0)) {
-        bx_address new_SSP_addr = BX_CPU_THIS_PTR msr.ia32_interrupt_ssp_table + (ist<<3);
-        new_SSP = system_read_qword(new_SSP_addr);
-      }
-#endif
     }
     else {
       //RSP_for_cpl_x = get_RSP_from_TSS(cs_descriptor.dpl);
-#if BX_SUPPORT_CET
-      new_SSP = BX_CPU_THIS_PTR msr.ia32_pl_ssp[cs_descriptor.dpl];
-#endif
     }
 
     // align stack
@@ -202,19 +186,9 @@ void BX_CPU_C::long_mode_int(Bit8u vector, bool soft_int, bool push_error, Bit16
     if (ist > 0) {
       BX_DEBUG(("interrupt(long mode): trap to IST, vector = %d", ist));
       //RSP_for_cpl_x = get_RSP_from_TSS(ist+3);
-#if BX_SUPPORT_CET
-      if (ShadowStackEnabled(CPL)) {
-        bx_address new_SSP_addr = BX_CPU_THIS_PTR msr.ia32_interrupt_ssp_table + (ist<<3);
-        new_SSP = system_read_qword(new_SSP_addr);
-      }
-#endif
     }
     else {
       RSP_for_cpl_x = RSP;
-#if BX_SUPPORT_CET
-      new_SSP = SSP;
-      check_ss_token = false;
-#endif
     }
 
     // align stack
@@ -244,21 +218,6 @@ void BX_CPU_C::long_mode_int(Bit8u vector, bool soft_int, bool push_error, Bit16
       (unsigned) cs_descriptor.type, (unsigned) cs_descriptor.dpl, (unsigned) CPL));
     exception(BX_GP_EXCEPTION, cs_selector.value & 0xfffc);
   }
-
-#if BX_SUPPORT_CET
-  if(ShadowStackEnabled(old_CPL)) {
-    if (old_CPL == 3)
-      BX_CPU_THIS_PTR msr.ia32_pl_ssp[3] = SSP;
-  }
-  if (ShadowStackEnabled(CPL)) {
-    bx_address old_SSP = SSP;
-    if(check_ss_token)
-      shadow_stack_switch(new_SSP);
-    if (old_SS_DPL != 3)
-      call_far_shadow_stack_push(old_CS, return_LIP, old_SSP);
-  }
-  track_indirect(CPL);
-#endif
 
   RSP = RSP_for_cpl_x;
 
@@ -790,10 +749,6 @@ void BX_CPU_C::interrupt(Bit8u vector, unsigned type, bool push_error, Bit16u er
   BX_CPU_THIS_PTR debug_trap = 0;
   BX_CPU_THIS_PTR inhibit_mask = 0;
 
-#if BX_SUPPORT_VMX || BX_SUPPORT_SVM
-  BX_CPU_THIS_PTR in_event = true;
-#endif
-
   RSP_SPECULATIVE;
 
 #if BX_SUPPORT_X86_64
@@ -924,32 +879,18 @@ void BX_CPU_C::exception(unsigned vector, Bit16u error_code)
 
   BX_DEBUG(("exception(0x%02x): error_code=%04x", vector, error_code));
 
-#if BX_SUPPORT_VMX
-  VMexit_Event(BX_HARDWARE_EXCEPTION, vector, error_code, push_error);
-#endif
-
-#if BX_SUPPORT_SVM
-  SvmInterceptException(BX_HARDWARE_EXCEPTION, vector, error_code, push_error);
-#endif
-
   if (exception_class == BX_EXCEPTION_CLASS_FAULT)
   {
     // restore RIP/RSP to value before error occurred
     RIP = BX_CPU_THIS_PTR prev_rip;
     if (BX_CPU_THIS_PTR speculative_rsp) {
       RSP = BX_CPU_THIS_PTR prev_rsp;
-#if BX_SUPPORT_CET
-      SSP = BX_CPU_THIS_PTR prev_ssp;
-#endif
     }
     BX_CPU_THIS_PTR speculative_rsp = false;
 
     if (BX_CPU_THIS_PTR last_exception_type == BX_ET_DOUBLE_FAULT)
     {
       debug(BX_CPU_THIS_PTR prev_rip); // print debug information to the log
-#if BX_SUPPORT_VMX
-      VMexit_TripleFault();
-#endif
 #if BX_DEBUGGER
       // trap into debugger (the same as when a PANIC occurs)
       bx_debug_break();

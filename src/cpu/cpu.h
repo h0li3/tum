@@ -891,27 +891,6 @@ public: // for now...
   Bit32u xcr0_suppmask;
 #endif
 
-#if BX_SUPPORT_PKEYS
-  // protection keys
-  Bit32u pkru;
-  Bit32u pkrs;
-
-  // unpacked protection keys to be tested together with accessBits from TLB
-  // the unpacked key is stored in the accessBits format:
-  //     bit 5: Execute from User   privilege is OK
-  //     bit 4: Execute from System privilege is OK
-  //     bit 3: Write   from User   privilege is OK
-  //     bit 2: Write   from System privilege is OK
-  //     bit 1: Read    from User   privilege is OK
-  //     bit 0: Read    from System privilege is OK
-  // But only bits 1 and 3 are relevant, all others should be set to '1
-  // When protection key prevents all accesses to the page both bits 1 and 3 are cleared
-  // When protection key prevents writes to the page bit 1 will be set and 3 cleared
-  // When no protection keys are enabled all bits should be set for all keys
-  Bit32u rd_pkey[16];
-  Bit32u wr_pkey[16];
-#endif
-
 #if BX_SUPPORT_FPU
   i387_t the_i387;
 #endif
@@ -4188,11 +4167,6 @@ public: // for now...
   BX_SMF void MONITOR(bxInstruction_c *) BX_CPP_AttrRegparmN(1);
   BX_SMF void MWAIT(bxInstruction_c *) BX_CPP_AttrRegparmN(1);
 
-#if BX_SUPPORT_PKEYS
-  BX_SMF void RDPKRU(bxInstruction_c *) BX_CPP_AttrRegparmN(1);
-  BX_SMF void WRPKRU(bxInstruction_c *) BX_CPP_AttrRegparmN(1);
-#endif
-
   BX_SMF void RDPID_Ed(bxInstruction_c *) BX_CPP_AttrRegparmN(1);
 
   BX_SMF void UndefinedOpcode(bxInstruction_c *) BX_CPP_AttrRegparmN(1);
@@ -4478,7 +4452,7 @@ public: // for now...
   BX_SMF void update_access_dirty_PAE(bx_phy_address *entry_addr, Bit64u *entry, BxMemtype *entry_memtype, unsigned max_level, unsigned leaf, unsigned write);
 #endif
 #if BX_SUPPORT_X86_64
-  BX_SMF bx_phy_address translate_linear_long_mode(bx_address laddr, Bit32u &lpf_mask, Bit32u &pkey, unsigned user, unsigned rw);
+  BX_SMF bx_phy_address translate_linear_long_mode(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw);
 #endif
 #if BX_SUPPORT_MEMTYPE
   BX_SMF BxMemtype memtype_by_mtrr(bx_phy_address paddr) BX_CPP_AttrRegparmN(1);
@@ -4795,10 +4769,6 @@ public: // for now...
   BX_SMF void   set_TSC(Bit64u tsc);
 #endif
 
-#if BX_SUPPORT_PKEYS
-  BX_SMF void set_PKeys(Bit32u pkru, Bit32u pkrs);
-#endif
-
 #if BX_SUPPORT_FPU
   BX_SMF void print_state_FPU(void);
   BX_SMF void prepareFPU(bxInstruction_c *i, bool = 1);
@@ -4868,46 +4838,12 @@ public: // for now...
 #endif
 #endif
 
-#if BX_SUPPORT_PKEYS
-  BX_SMF bool xsave_pkru_state_xinuse(void);
-  BX_SMF void xsave_pkru_state(bxInstruction_c *i, bx_address offset);
-  BX_SMF void xrstor_pkru_state(bxInstruction_c *i, bx_address offset);
-  BX_SMF void xrstor_init_pkru_state(void);
-#endif
-
-#if BX_SUPPORT_CET
-  BX_SMF bool xsave_cet_u_state_xinuse(void);
-  BX_SMF void xsave_cet_u_state(bxInstruction_c *i, bx_address offset);
-  BX_SMF void xrstor_cet_u_state(bxInstruction_c *i, bx_address offset);
-  BX_SMF void xrstor_init_cet_u_state(void);
-
-  BX_SMF bool xsave_cet_s_state_xinuse(void);
-  BX_SMF void xsave_cet_s_state(bxInstruction_c *i, bx_address offset);
-  BX_SMF void xrstor_cet_s_state(bxInstruction_c *i, bx_address offset);
-  BX_SMF void xrstor_init_cet_s_state(void);
-#endif
-#endif
-
-#if BX_SUPPORT_CET
- BX_SMF bool ShadowStackEnabled(unsigned cpl) BX_CPP_AttrRegparmN(1);
- BX_SMF bool ShadowStackWriteEnabled(unsigned cpl) BX_CPP_AttrRegparmN(1);
- BX_SMF bool EndbranchEnabled(unsigned cpl) BX_CPP_AttrRegparmN(1);
- BX_SMF bool EndbranchEnabledAndNotSuppressed(unsigned cpl) BX_CPP_AttrRegparmN(1);
- BX_SMF bool WaitingForEndbranch(unsigned cpl) BX_CPP_AttrRegparmN(1);
- BX_SMF bool LegacyEndbranchTreatment(unsigned cpl) BX_CPP_AttrRegparmN(1);
- BX_SMF void track_indirect(unsigned cpl) BX_CPP_AttrRegparmN(1);
- BX_SMF void track_indirect_if_not_suppressed(bxInstruction_c *i, unsigned cpl) BX_CPP_AttrRegparmN(2);
- BX_SMF void reset_endbranch_tracker(unsigned cpl, bool suppress=false) BX_CPP_AttrRegparmN(2);
 #endif
 
 #if BX_SUPPORT_MONITOR_MWAIT
   BX_SMF bool   is_monitor(bx_phy_address addr, unsigned len);
   BX_SMF void   check_monitor(bx_phy_address addr, unsigned len);
   BX_SMF void   wakeup_monitor(void);
-#endif
-
-#if BX_CONFIGURE_MSRS
-  int load_MSRs(const char *file);
 #endif
 };
 
