@@ -23,5 +23,4 @@ fpu_sources = [
 
 fpu_library = static_library('fpu',
                         fpu_sources,
-                        include_directories: incdir,
-                        override_options: ['warning_level=2'])
+                        include_directories: incdir)

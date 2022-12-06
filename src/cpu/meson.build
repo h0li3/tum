@@ -89,6 +89,5 @@ cpu_sources = [
 
 cpu_library = static_library('cpu',
                         cpu_sources,
-                        include_directories: incdir,
-                        override_options: ['warning_level=2'])
+                        include_directories: incdir)
 

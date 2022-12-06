@@ -4,6 +4,10 @@ project('tum', 'cpp',
 
 incdir = include_directories('include', 'src', 'src/instrument/stubs')
 
+add_global_arguments(
+  ['-Wno-unused', '-Wno-deprecated-declarations'],
+  language: 'cpp'
+)
  
 subdir('src')
 
@@ -21,4 +25,5 @@ libs = [cpu_library,
 executable(meson.project_name(),
            sources,
            include_directories: incdir,
-           link_with: libs)
+           link_with: libs,
+           cpp_args: '-Wno-unused')
