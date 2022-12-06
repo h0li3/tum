@@ -133,9 +133,9 @@
 // members of the C++ CPU class to be static.
 // This defaults to 1 since it should improve performance, but when
 // SMP mode is enabled, it will be turned off by configure.
-#define BX_USE_CPU_SMF 1
+#define BX_USE_CPU_SMF 0
 
-#define BX_USE_MEM_SMF 1
+#define BX_USE_MEM_SMF 0
 
 // Use static member functions in IO DEVice emulation modules.
 // For efficiency, use C like functions for IO handling,
