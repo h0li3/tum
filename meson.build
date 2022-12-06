@@ -15,7 +15,7 @@ sources = ['src/main.cc',
 
 libs = [cpu_library,
         fpu_library,
-        softmmu_library]
+]
 
 executable(meson.project_name(),
            sources,

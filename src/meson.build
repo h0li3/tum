@@ -1,3 +1,3 @@
 subdir('cpu')
 subdir('cpu/fpu')
-subdir('softmmu')
+#subdir('softmmu')
