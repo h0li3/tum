@@ -1,3 +1,5 @@
 [binaries]
 c = 'gcc'
+c++ = 'g++'
 ar = 'ar'
+strip = 'strip'
