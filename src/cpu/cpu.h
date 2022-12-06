@@ -4424,7 +4424,7 @@ public: // for now...
   BX_SMF bx_phy_address translate_linear(bx_TLB_entry *entry, bx_address laddr, unsigned user, unsigned rw);
   BX_SMF void update_access_dirty(bx_phy_address *entry_addr, Bit32u *entry, BxMemtype *entry_memtype, unsigned leaf, unsigned write);
 #if BX_SUPPORT_X86_64
-  bx_phy_address translate_linear_long_mode(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw);
+  BX_SMF bx_phy_address translate_linear_long_mode(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw);
 #endif
 
 #if BX_CPU_LEVEL >= 6

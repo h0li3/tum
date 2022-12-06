@@ -18,3 +18,8 @@ void BX_MEM_C::readPhysicalPage(BX_CPU_C *cpu, bx_phy_address addr, unsigned len
 	}
     memcpy(data, vector + addr, len);
 }
+
+bx_address BX_MEM_C::allocate_page(bx_address addr, unsigned rw)
+{
+	BX_PANIC(("Allocate page at %p\n", (void*)addr));
+}

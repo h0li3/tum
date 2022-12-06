@@ -50,6 +50,7 @@ public:
   Bit64u  get_memory_len(void);
   void allocate_block(Bit32u index);
   Bit8u* alloc_vector_aligned(Bit64u bytes, Bit64u alignment);
+  bx_address allocate_page(bx_address addr, unsigned rw);
 };
 
 BOCHSAPI extern BX_MEM_C bx_mem;

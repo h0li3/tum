@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 		auto* cache = bx_cpu.getICacheEntry();	// 获取指令缓存
 		auto* i = cache->i;
 		bx_cpu.gen_reg[BX_64BIT_REG_RIP].rrx += i->ilen();	// 修改PC
-  		BX_CPU_CALL_METHOD(i->execute1, (i));	// 执行指令
+		(&bx_cpu->*i->execute1)(i);	// 执行指令
 		// RAX应该等于0x3322
 		printf("rax = %lx\n", bx_cpu.gen_reg[BX_64BIT_REG_RAX].rrx);
 	}
