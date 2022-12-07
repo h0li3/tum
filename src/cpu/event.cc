@@ -100,7 +100,7 @@ bool BX_CPU_C::handleWaitForEvent(void)
 
 void BX_CPU_C::InterruptAcknowledge(void)
 {
-  Bit8u vector;
+  Bit8u vector = 0;
 
   BX_CPU_THIS_PTR EXT = 1; /* external event */
 

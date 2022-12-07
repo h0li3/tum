@@ -266,8 +266,8 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::call_gate(bx_descriptor_t *gate_descriptor
   // if non-conforming code segment and DPL < CPL then
   if (IS_CODE_SEGMENT_NON_CONFORMING(cs_descriptor.type) && (cs_descriptor.dpl < CPL))
   {
-    Bit16u SS_for_cpl_x;
-    Bit32u ESP_for_cpl_x;
+    Bit16u SS_for_cpl_x = 0;
+    Bit32u ESP_for_cpl_x = 0;
     bx_selector_t   ss_selector;
     bx_descriptor_t ss_descriptor;
     Bit16u   return_SS, return_CS;

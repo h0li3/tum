@@ -6,11 +6,11 @@
 void BX_MEM_C::init_memory(Bit64u guest, Bit64u host, Bit32u block_size)
 {
     if (block_size != 4096) {
-        BX_PANIC(("Block size %d is not 4096", block_size));
+        BX_PANIC(("Block size %u is not 4096", block_size));
     }
 
     if (host & 4095) {
-        BX_PANIC(("Host memory size %d is not power of 4095", host));
+        BX_PANIC(("Host memory size %lu is not power of 4095", host));
     }
 
     vector = new Bit8u[host];
