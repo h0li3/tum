@@ -3,6 +3,8 @@
 namespace tum
 {
 
+MemoryMap mem_map;
+
 MemoryMap::MemoryMap()
 : head_{}, num_of_areas_(0)
 {

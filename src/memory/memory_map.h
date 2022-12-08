@@ -45,6 +45,8 @@ private:
     int num_of_areas_;
 };
 
+extern MemoryMap mem_map;
+
 }
 
 #endif // TUM_MEMORY_MAP_H
