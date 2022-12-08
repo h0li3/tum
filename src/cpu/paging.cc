@@ -231,83 +231,6 @@
 // bit [11] of the TLB lpf used for TLB_NoHostPtr valid indication
 #define TLB_LPFOf(laddr) AlignedAccessLPFOf(laddr, 0x7ff)
 
-#if BX_CPU_LEVEL >= 4
-#  define BX_PRIV_CHECK_SIZE 32
-#else
-#  define BX_PRIV_CHECK_SIZE 16
-#endif
-
-// The 'priv_check' array is used to decide if the current access
-// has the proper paging permissions.  An index is formed, based
-// on parameters such as the access type and level, the write protect
-// flag and values cached in the TLB.  The format of the index into this
-// array is:
-//
-//   |4 |3 |2 |1 |0 |
-//   |wp|us|us|rw|rw|
-//    |  |  |  |  |
-//    |  |  |  |  +---> r/w of current access
-//    |  |  +--+------> u/s,r/w combined of page dir & table (cached)
-//    |  +------------> u/s of current access
-//    +---------------> Current CR0.WP value
-//
-//                                                                  CR0.WP = 0     CR0.WP = 1
-//    -----------------------------------------------------------------------------------------
-//       0  0  0  0 | sys read from supervisor page             | Allowed       | Allowed
-//       0  0  0  1 | sys write to read only supervisor page    | Allowed       | Not Allowed
-//       0  0  1  0 | sys read from supervisor page             | Allowed       | Allowed
-//       0  0  1  1 | sys write to supervisor page              | Allowed       | Allowed
-//       0  1  0  0 | sys read from read only user page         | Allowed       | Allowed
-//       0  1  0  1 | sys write to read only user page          | Allowed       | Not Allowed
-//       0  1  1  0 | sys read from user page                   | Allowed       | Allowed
-//       0  1  1  1 | sys write to user page                    | Allowed       | Allowed
-//       1  0  0  0 | user read from read only supervisor page  | Not Allowed   | Not Allowed
-//       1  0  0  1 | user write to read only supervisor page   | Not Allowed   | Not Allowed
-//       1  0  1  0 | user read from supervisor page            | Not Allowed   | Not Allowed
-//       1  0  1  1 | user write to supervisor page             | Not Allowed   | Not Allowed
-//       1  1  0  0 | user read from read only user page        | Allowed       | Allowed
-//       1  1  0  1 | user write to read only user page         | Not Allowed   | Not Allowed
-//       1  1  1  0 | user read from user page                  | Allowed       | Allowed
-//       1  1  1  1 | user write to user page                   | Allowed       | Allowed
-//
-
-/* 0xff0bbb0b */
-static const Bit8u priv_check[BX_PRIV_CHECK_SIZE] =
-{
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1,
-#if BX_CPU_LEVEL >= 4
-    1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1
-#endif
-};
-
-// The 'priv_check' array for shadow stack accesses
-//
-//      |3 |2 |1 |0 |
-//      |us|us|rw|rw|
-//       |  |  |  |
-//       |  |  |  +---> r/w of current access
-//       |  +--+------> u/s,r/w combined of page dir & table (cached)
-//       +------------> u/s of current access
-//
-//    -------------------------------------------------------------------
-//       0  0  0  0 | sys read from supervisor page             | Allowed
-//       0  0  0  1 | sys write to read only supervisor page    | Allowed : shadow stack page looks like read only page
-//       0  0  1  0 | sys read from supervisor page             | Allowed
-//       0  0  1  1 | sys write to supervisor page              | Allowed
-//       0  1  0  0 | sys read from read only user page         | Not Allowed   : supervisor-mode shadow-stack access is not allowed to a user-mode page
-//       0  1  0  1 | sys write to read only user page          | Not Allowed   : supervisor-mode shadow-stack access is not allowed to a user-mode page
-//       0  1  1  0 | sys read from user page                   | Not Allowed   : supervisor-mode shadow-stack access is not allowed to a user-mode page
-//       0  1  1  1 | sys write to user page                    | Not Allowed   : supervisor-mode shadow-stack access is not allowed to a user-mode page
-//       1  0  0  0 | user read from read only supervisor page  | Not Allowed   : user-mode shadow-stack access is not allowed to a supervisor-mode page
-//       1  0  0  1 | user write to read only supervisor page   | Not Allowed   : user-mode shadow-stack access is not allowed to a supervisor-mode page
-//       1  0  1  0 | user read from supervisor page            | Not Allowed   : user-mode shadow-stack access is not allowed to a supervisor-mode page
-//       1  0  1  1 | user write to supervisor page             | Not Allowed   : user-mode shadow-stack access is not allowed to a supervisor-mode page
-//       1  1  0  0 | user read from read only user page        | Allowed
-//       1  1  0  1 | user write to read only user page         | Allowed : shadow stack page looks like read only page
-//       1  1  1  0 | user read from user page                  | Allowed
-//       1  1  1  1 | user write to user page                   | Allowed
-//
-
 const Bit64u BX_PAGING_PHY_ADDRESS_RESERVED_BITS = BX_PHY_ADDRESS_RESERVED_BITS & BX_CONST64(0xfffffffffffff);
 
 const Bit64u PAGE_DIRECTORY_NX_BIT = BX_CONST64(0x8000000000000000);
@@ -623,58 +546,33 @@ inline bool is_present(bx_address addr)
 // Translate a linear address to a physical address in long mode
 bx_phy_address BX_CPU_C::translate_linear_long_mode(bx_address laddr, Bit32u &lpf_mask, unsigned user, unsigned rw)
 {
-    bx_phy_address ppf = BX_CPU_THIS_PTR cr3 & BX_CR3_PAGING_MASK;
-
-    bx_phy_address entry_addr[4];
-    Bit64u entry[4];
-    BxMemtype entry_memtype[4] = { 0 };
-
-    bool nx_fault = false;
     int leaf;
+    bx_phy_address entry_addr;
+    bx_phy_address ppf = BX_CPU_THIS_PTR cr3 & BX_CR3_PAGING_MASK;
+	Bit64
 
-    Bit64u offset_mask = BX_CONST64(0x0000ffffffffffff);
     lpf_mask = 0xfff;
-    Bit32u combined_access = (BX_COMBINED_ACCESS_WRITE | BX_COMBINED_ACCESS_USER);
     Bit64u curr_entry = BX_CPU_THIS_PTR cr3;
 
-    Bit64u reserved = PAGING_PAE_RESERVED_BITS;
-    if (! BX_CPU_THIS_PTR efer.get_NXE())
-      reserved |= PAGE_DIRECTORY_NX_BIT;
-
     for (leaf = BX_LEVEL_PML4;; --leaf) {
-      entry_addr[leaf] = ppf + ((laddr >> (9 + 9*leaf)) & 0xff8);
+      entry_addr = ppf + ((laddr >> (9 + 9*leaf)) & 0xff8);
 
-      access_read_physical(entry_addr[leaf], 8, &entry[leaf]);
-
-      offset_mask >>= 9;
+      access_read_physical(entry_addr, 8, &entry);
 
       curr_entry = entry[leaf];
       if (is_present(curr_entry)) {
         ppf = curr_entry & BX_CONST64(0xfffffffffffff000);
       }
       else {
-        //page_fault(ERROR_NOT_PRESENT, laddr, user, rw);
-        // 页面不存在，调用allocate_page检查并分配内存页
-        ppf = BX_MEM(0)->allocate_page(laddr, rw);
+        // 页面不存在，直接调用allocate_page检查并分配内存页
+        ppf = BX_MEM(0)->allocate_page(this, laddr, rw);
+		break;
       }
-
-      if (leaf == BX_LEVEL_PTE) break;
-
-      combined_access &= curr_entry; // U/S and R/W
     }
 
     bool isWrite = (rw & 1); // write or r-m-w
 
-    combined_access &= entry[leaf]; // U/S and R/W
-
-    unsigned priv_index = (BX_CPU_THIS_PTR cr0.get_WP() << 4) | // bit 4
-	  (user<<3) |                           // bit 3
-	  (combined_access | (unsigned)isWrite);// bit 2,1,0
-
-    if (!priv_check[priv_index] || nx_fault)
-	  page_fault(ERROR_PROTECTION, laddr, user, rw);
-
-    return (ppf | combined_access);
+    return ppf;
 }
 
 const Bit64u PAGING_PAE_PDPTE_RESERVED_BITS = BX_PAGING_PHY_ADDRESS_RESERVED_BITS | BX_CONST64(0xFFF00000000001E6);
