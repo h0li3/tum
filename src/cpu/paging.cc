@@ -549,7 +549,7 @@ bx_phy_address BX_CPU_C::translate_linear_long_mode(bx_address laddr, Bit32u &lp
     int leaf;
     bx_phy_address entry_addr;
     bx_phy_address ppf = BX_CPU_THIS_PTR cr3 & BX_CR3_PAGING_MASK;
-	Bit64
+    Bit64u entry;
 
     lpf_mask = 0xfff;
     Bit64u curr_entry = BX_CPU_THIS_PTR cr3;
@@ -559,9 +559,8 @@ bx_phy_address BX_CPU_C::translate_linear_long_mode(bx_address laddr, Bit32u &lp
 
       access_read_physical(entry_addr, 8, &entry);
 
-      curr_entry = entry[leaf];
-      if (is_present(curr_entry)) {
-        ppf = curr_entry & BX_CONST64(0xfffffffffffff000);
+      if (is_present(entry)) {
+        ppf = entry & BX_CONST64(0xfffffffffffff000);
       }
       else {
         // 页面不存在，直接调用allocate_page检查并分配内存页
