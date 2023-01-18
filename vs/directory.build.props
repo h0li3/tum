@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <RootDir>$(SolutionDir)..\</RootDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <TargetName>$(ProjectName)d</TargetName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetName>$(ProjectName)</TargetName>
+    <OutDir Condition="'$(Platform)'=='x64'">$(RootDir)bin\</OutDir>
+    <OutDir Condition="'$(Platform)'=='win32'">$(RootDir)bin\x86\</OutDir>
+    <IntDir>.build\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <WarningLevel Condition="'$(Configuration)'=='Debug'">Level1</WarningLevel>
+      <SDLCheck>false</SDLCheck>
+      <AdditionalIncludeDirectories>$(RootDir)include;$(RootDir)src;$(RootDir)src\cpu;$(RootDir)src\instrument\stubs</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="RootDir">
+      <Value>$(RootDir)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

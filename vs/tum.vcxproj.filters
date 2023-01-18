@@ -1,0 +1,599 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{69eb226b-9c0e-4e14-be7f-c6f18c5807eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{68d1878c-1ee3-42b0-af4a-d9a63d3d4534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\cpu">
+      <UniqueIdentifier>{22ae783a-b948-4c70-b393-1e11c20333a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\cpu\fpu">
+      <UniqueIdentifier>{5aa5abd1-f78a-4995-82fb-1045207cef17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\cpu\avx">
+      <UniqueIdentifier>{bf488ba6-831d-4248-b8a0-5cfc28568cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\cpu\decoder">
+      <UniqueIdentifier>{43330892-85c4-4983-bcf0-8c3aa1b504cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\memory">
+      <UniqueIdentifier>{60b843fd-a032-4ef9-91ef-b04262aab74a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\bochs.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\bswap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\cpudb.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\siminterface.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\logio.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\osdep.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\access.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\cpu.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\cpuid.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\cpustats.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\crregs.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\descriptor.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\generic_cpuid.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\i387.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\icache.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\lazy_flags.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\msr.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\scalar_arith.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\simd_compare.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\simd_int.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\simd_pfp.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\smm.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\stack.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\tlb.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\wide_int.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\xmm.h">
+      <Filter>src\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\control_w.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\fpu_constant.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\softfloat.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\softfloat-compare.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\softfloat-macros.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\softfloat-round-pack.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\softfloat-specialize.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\softfloatx80.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\status_w.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\fpu\tag_w.h">
+      <Filter>src\cpu\fpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\decoder.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_avx.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_evex.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_opmap.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_opmap_0f3a.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_opmap_0f38.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_x87.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_xop.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\ia_opcodes.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu\decoder\instr.h">
+      <Filter>src\cpu\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\memory\memory-bochs.h">
+      <Filter>src\memory</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\logio.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\osdep.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\3dnow.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\access.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\access2.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\aes.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\arith8.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\arith16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\arith32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\arith64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\bcd.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\bit.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\bit16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\bit32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\bit64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\bmi32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\bmi64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\call_far.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\cet.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\cmpccxadd32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\cmpccxadd64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\cpu.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\cpuid.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\crc32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\crregs.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\ctrl_xfer_pro.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\ctrl_xfer16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\ctrl_xfer32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\ctrl_xfer64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\data_xfer8.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\data_xfer16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\data_xfer32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\data_xfer64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\debugstuff.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\event.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\exception.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\faststring.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\flag_ctrl.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\flag_ctrl_pro.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu_emu.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\generic_cpuid.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\gf2.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\icache.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\init.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\io.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\iret.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\jmp_far.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\load.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\logical8.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\logical16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\logical32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\logical64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\mmx.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\msr.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\mult8.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\mult16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\mult32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\mult64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\mwait.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\paging.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\proc_ctrl.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\protect_ctrl.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\rdrand.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\ret_far.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\segment_ctrl.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\segment_ctrl_pro.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\sha.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\shift8.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\shift16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\shift32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\shift64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\smm.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\soft_int.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\sse.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\sse_move.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\sse_pfp.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\sse_rcp.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\sse_string.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\stack.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\stack16.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\stack32.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\stack64.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\string.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\tasking.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\vapic.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\vm8086.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\wide_int.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\xsave.cc">
+      <Filter>src\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\f2xm1.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\ferr.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpatan.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fprem.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu_arith.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu_cmov.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu_compare.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu_const.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu_load_store.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu_misc.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fpu_trans.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fsincos.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\fyl2x.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\poly.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\softfloat.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\softfloat16.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\softfloat-muladd.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\softfloat-round-pack.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\softfloat-specialize.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\fpu\softfloatx80.cc">
+      <Filter>src\cpu\fpu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx_cvt.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx_fma.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx_ifma52.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx_pfp.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx2.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_bitalg.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_broadcast.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_cvt.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_fma.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_mask8.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_mask16.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_mask32.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_mask64.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_move.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_pfp.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_rcp14.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\avx512_rsqrt14.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\gather.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\tbm32.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\tbm64.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\vnni.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\avx\xop.cc">
+      <Filter>src\cpu\avx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\decoder\disasm.cc">
+      <Filter>src\cpu\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\decoder\fetchdecode32.cc">
+      <Filter>src\cpu\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cpu\decoder\fetchdecode64.cc">
+      <Filter>src\cpu\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\memory\memory.cc">
+      <Filter>src\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\memory\misc_mem.cc">
+      <Filter>src\memory</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\cpu\decoder\ia_opcodes.def">
+      <Filter>src\cpu\decoder</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{80709f95-f6ac-4cdc-83c7-402cbe7c348d}</ProjectGuid>
+    <RootNamespace>tum</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\bochs.h" />
+    <ClInclude Include="..\include\bswap.h" />
+    <ClInclude Include="..\include\config.h" />
+    <ClInclude Include="..\include\cpudb.h" />
+    <ClInclude Include="..\include\siminterface.h" />
+    <ClInclude Include="..\src\cpu\access.h" />
+    <ClInclude Include="..\src\cpu\cpu.h" />
+    <ClInclude Include="..\src\cpu\cpuid.h" />
+    <ClInclude Include="..\src\cpu\cpustats.h" />
+    <ClInclude Include="..\src\cpu\crregs.h" />
+    <ClInclude Include="..\src\cpu\decoder\decoder.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_avx.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_evex.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_opmap.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_opmap_0f38.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_opmap_0f3a.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_x87.h" />
+    <ClInclude Include="..\src\cpu\decoder\fetchdecode_xop.h" />
+    <ClInclude Include="..\src\cpu\decoder\ia_opcodes.h" />
+    <ClInclude Include="..\src\cpu\decoder\instr.h" />
+    <ClInclude Include="..\src\cpu\descriptor.h" />
+    <ClInclude Include="..\src\cpu\fpu\control_w.h" />
+    <ClInclude Include="..\src\cpu\fpu\fpu_constant.h" />
+    <ClInclude Include="..\src\cpu\fpu\softfloat-compare.h" />
+    <ClInclude Include="..\src\cpu\fpu\softfloat-macros.h" />
+    <ClInclude Include="..\src\cpu\fpu\softfloat-round-pack.h" />
+    <ClInclude Include="..\src\cpu\fpu\softfloat-specialize.h" />
+    <ClInclude Include="..\src\cpu\fpu\softfloat.h" />
+    <ClInclude Include="..\src\cpu\fpu\softfloatx80.h" />
+    <ClInclude Include="..\src\cpu\fpu\status_w.h" />
+    <ClInclude Include="..\src\cpu\fpu\tag_w.h" />
+    <ClInclude Include="..\src\cpu\generic_cpuid.h" />
+    <ClInclude Include="..\src\cpu\i387.h" />
+    <ClInclude Include="..\src\cpu\icache.h" />
+    <ClInclude Include="..\src\cpu\lazy_flags.h" />
+    <ClInclude Include="..\src\cpu\msr.h" />
+    <ClInclude Include="..\src\cpu\scalar_arith.h" />
+    <ClInclude Include="..\src\cpu\simd_compare.h" />
+    <ClInclude Include="..\src\cpu\simd_int.h" />
+    <ClInclude Include="..\src\cpu\simd_pfp.h" />
+    <ClInclude Include="..\src\cpu\smm.h" />
+    <ClInclude Include="..\src\cpu\stack.h" />
+    <ClInclude Include="..\src\cpu\tlb.h" />
+    <ClInclude Include="..\src\cpu\wide_int.h" />
+    <ClInclude Include="..\src\cpu\xmm.h" />
+    <ClInclude Include="..\src\logio.h" />
+    <ClInclude Include="..\src\memory\memory-bochs.h" />
+    <ClInclude Include="..\src\osdep.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\cpu\3dnow.cc" />
+    <ClCompile Include="..\src\cpu\access.cc" />
+    <ClCompile Include="..\src\cpu\access2.cc" />
+    <ClCompile Include="..\src\cpu\aes.cc" />
+    <ClCompile Include="..\src\cpu\arith16.cc" />
+    <ClCompile Include="..\src\cpu\arith32.cc" />
+    <ClCompile Include="..\src\cpu\arith64.cc" />
+    <ClCompile Include="..\src\cpu\arith8.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx2.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_bitalg.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_broadcast.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_cvt.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_fma.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_mask16.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_mask32.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_mask64.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_mask8.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_move.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_pfp.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_rcp14.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx512_rsqrt14.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx_cvt.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx_fma.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx_ifma52.cc" />
+    <ClCompile Include="..\src\cpu\avx\avx_pfp.cc" />
+    <ClCompile Include="..\src\cpu\avx\gather.cc" />
+    <ClCompile Include="..\src\cpu\avx\tbm32.cc" />
+    <ClCompile Include="..\src\cpu\avx\tbm64.cc" />
+    <ClCompile Include="..\src\cpu\avx\vnni.cc" />
+    <ClCompile Include="..\src\cpu\avx\xop.cc" />
+    <ClCompile Include="..\src\cpu\bcd.cc" />
+    <ClCompile Include="..\src\cpu\bit.cc" />
+    <ClCompile Include="..\src\cpu\bit16.cc" />
+    <ClCompile Include="..\src\cpu\bit32.cc" />
+    <ClCompile Include="..\src\cpu\bit64.cc" />
+    <ClCompile Include="..\src\cpu\bmi32.cc" />
+    <ClCompile Include="..\src\cpu\bmi64.cc" />
+    <ClCompile Include="..\src\cpu\call_far.cc" />
+    <ClCompile Include="..\src\cpu\cet.cc" />
+    <ClCompile Include="..\src\cpu\cmpccxadd32.cc" />
+    <ClCompile Include="..\src\cpu\cmpccxadd64.cc" />
+    <ClCompile Include="..\src\cpu\cpu.cc" />
+    <ClCompile Include="..\src\cpu\cpuid.cc" />
+    <ClCompile Include="..\src\cpu\crc32.cc" />
+    <ClCompile Include="..\src\cpu\crregs.cc" />
+    <ClCompile Include="..\src\cpu\ctrl_xfer16.cc" />
+    <ClCompile Include="..\src\cpu\ctrl_xfer32.cc" />
+    <ClCompile Include="..\src\cpu\ctrl_xfer64.cc" />
+    <ClCompile Include="..\src\cpu\ctrl_xfer_pro.cc" />
+    <ClCompile Include="..\src\cpu\data_xfer16.cc" />
+    <ClCompile Include="..\src\cpu\data_xfer32.cc" />
+    <ClCompile Include="..\src\cpu\data_xfer64.cc" />
+    <ClCompile Include="..\src\cpu\data_xfer8.cc" />
+    <ClCompile Include="..\src\cpu\debugstuff.cc" />
+    <ClCompile Include="..\src\cpu\decoder\disasm.cc" />
+    <ClCompile Include="..\src\cpu\decoder\fetchdecode32.cc" />
+    <ClCompile Include="..\src\cpu\decoder\fetchdecode64.cc" />
+    <ClCompile Include="..\src\cpu\event.cc" />
+    <ClCompile Include="..\src\cpu\exception.cc" />
+    <ClCompile Include="..\src\cpu\faststring.cc" />
+    <ClCompile Include="..\src\cpu\flag_ctrl.cc" />
+    <ClCompile Include="..\src\cpu\flag_ctrl_pro.cc" />
+    <ClCompile Include="..\src\cpu\fpu\f2xm1.cc" />
+    <ClCompile Include="..\src\cpu\fpu\ferr.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpatan.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fprem.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu_arith.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu_cmov.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu_compare.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu_const.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu_load_store.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu_misc.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fpu_trans.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fsincos.cc" />
+    <ClCompile Include="..\src\cpu\fpu\fyl2x.cc" />
+    <ClCompile Include="..\src\cpu\fpu\poly.cc" />
+    <ClCompile Include="..\src\cpu\fpu\softfloat-muladd.cc" />
+    <ClCompile Include="..\src\cpu\fpu\softfloat-round-pack.cc" />
+    <ClCompile Include="..\src\cpu\fpu\softfloat-specialize.cc" />
+    <ClCompile Include="..\src\cpu\fpu\softfloat.cc" />
+    <ClCompile Include="..\src\cpu\fpu\softfloat16.cc" />
+    <ClCompile Include="..\src\cpu\fpu\softfloatx80.cc" />
+    <ClCompile Include="..\src\cpu\fpu_emu.cc" />
+    <ClCompile Include="..\src\cpu\generic_cpuid.cc" />
+    <ClCompile Include="..\src\cpu\gf2.cc" />
+    <ClCompile Include="..\src\cpu\icache.cc" />
+    <ClCompile Include="..\src\cpu\init.cc" />
+    <ClCompile Include="..\src\cpu\io.cc" />
+    <ClCompile Include="..\src\cpu\iret.cc" />
+    <ClCompile Include="..\src\cpu\jmp_far.cc" />
+    <ClCompile Include="..\src\cpu\load.cc" />
+    <ClCompile Include="..\src\cpu\logical16.cc" />
+    <ClCompile Include="..\src\cpu\logical32.cc" />
+    <ClCompile Include="..\src\cpu\logical64.cc" />
+    <ClCompile Include="..\src\cpu\logical8.cc" />
+    <ClCompile Include="..\src\cpu\mmx.cc" />
+    <ClCompile Include="..\src\cpu\msr.cc" />
+    <ClCompile Include="..\src\cpu\mult16.cc" />
+    <ClCompile Include="..\src\cpu\mult32.cc" />
+    <ClCompile Include="..\src\cpu\mult64.cc" />
+    <ClCompile Include="..\src\cpu\mult8.cc" />
+    <ClCompile Include="..\src\cpu\mwait.cc" />
+    <ClCompile Include="..\src\cpu\paging.cc" />
+    <ClCompile Include="..\src\cpu\proc_ctrl.cc" />
+    <ClCompile Include="..\src\cpu\protect_ctrl.cc" />
+    <ClCompile Include="..\src\cpu\rdrand.cc" />
+    <ClCompile Include="..\src\cpu\ret_far.cc" />
+    <ClCompile Include="..\src\cpu\segment_ctrl.cc" />
+    <ClCompile Include="..\src\cpu\segment_ctrl_pro.cc" />
+    <ClCompile Include="..\src\cpu\sha.cc" />
+    <ClCompile Include="..\src\cpu\shift16.cc" />
+    <ClCompile Include="..\src\cpu\shift32.cc" />
+    <ClCompile Include="..\src\cpu\shift64.cc" />
+    <ClCompile Include="..\src\cpu\shift8.cc" />
+    <ClCompile Include="..\src\cpu\smm.cc" />
+    <ClCompile Include="..\src\cpu\soft_int.cc" />
+    <ClCompile Include="..\src\cpu\sse.cc" />
+    <ClCompile Include="..\src\cpu\sse_move.cc" />
+    <ClCompile Include="..\src\cpu\sse_pfp.cc" />
+    <ClCompile Include="..\src\cpu\sse_rcp.cc" />
+    <ClCompile Include="..\src\cpu\sse_string.cc" />
+    <ClCompile Include="..\src\cpu\stack.cc" />
+    <ClCompile Include="..\src\cpu\stack16.cc" />
+    <ClCompile Include="..\src\cpu\stack32.cc" />
+    <ClCompile Include="..\src\cpu\stack64.cc" />
+    <ClCompile Include="..\src\cpu\string.cc" />
+    <ClCompile Include="..\src\cpu\tasking.cc" />
+    <ClCompile Include="..\src\cpu\vapic.cc" />
+    <ClCompile Include="..\src\cpu\vm8086.cc" />
+    <ClCompile Include="..\src\cpu\wide_int.cc" />
+    <ClCompile Include="..\src\cpu\xsave.cc" />
+    <ClCompile Include="..\src\logio.cc" />
+    <ClCompile Include="..\src\main.cc" />
+    <ClCompile Include="..\src\memory\memory.cc" />
+    <ClCompile Include="..\src\memory\misc_mem.cc" />
+    <ClCompile Include="..\src\osdep.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\cpu\decoder\ia_opcodes.def" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
