@@ -48,15 +48,6 @@
 #define BX_SHOW_IPS 0
 
 
-#define MSVC_TARGET 0
-#if defined(_MSC_VER) && defined(MSVC_TARGET)
-#if defined(_M_X64) && (MSVC_TARGET != 64)
-#error Bochs not configured for MSVC WIN64
-#elif !defined(_M_X64) && (MSVC_TARGET != 32)
-#error Bochs not configured for MSVC WIN32
-#endif
-#endif
-
 #if (BX_SHOW_IPS) && (defined(__MINGW32__) || defined(_MSC_VER))
 #define        SIGALRM         14
 #endif
@@ -91,7 +82,7 @@
 #define BX_HAVE_ABORT 1
 #define BX_HAVE_SOCKLEN_T 1
 #define BX_HAVE_SOCKADDR_IN_SIN_LEN 0
-#define BX_HAVE_GETTIMEOFDAY 1
+#define BX_HAVE_GETTIMEOFDAY 0
 #if defined(WIN32)
 #define BX_HAVE_REALTIME_USEC 1
 #else
@@ -403,25 +394,11 @@
   typedef   signed short Bit16s;
 #endif
 
-#if SIZEOF_UNSIGNED_INT == 4
-  typedef unsigned int Bit32u;
-  typedef   signed int Bit32s;
-#elif SIZEOF_UNSIGNED_LONG == 4
-  typedef unsigned long Bit32u;
-  typedef   signed long Bit32s;
-#else
-#  error "can't find sizeof(type) of 4 bytes!"
-#endif
+typedef unsigned int Bit32u;
+typedef   signed int Bit32s;
 
-#if SIZEOF_UNSIGNED_LONG == 8
-  typedef unsigned long Bit64u;
-  typedef   signed long Bit64s;
-#elif SIZEOF_UNSIGNED_LONG_LONG == 8
-  typedef unsigned long long Bit64u;
-  typedef   signed long long Bit64s;
-#else
-#  error "can't find data type of 8 bytes"
-#endif
+typedef unsigned long long Bit64u;
+typedef   signed long long Bit64s;
 
 #endif
 

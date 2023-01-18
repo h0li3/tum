@@ -66,7 +66,7 @@ extern "C" {
 #include <assert.h>
 #include <errno.h>
 
-#ifndef WIN32
+#ifndef _WIN32
 #  include <unistd.h>
 #else
 #  include <io.h>
@@ -84,7 +84,7 @@ extern "C" {
 #  include <sys/time.h>
 #  include <utime.h>
 #else
-#  ifndef WIN32
+#  ifndef _WIN32
 #    include <sys/time.h>
 #  endif
 #  include <sys/types.h>

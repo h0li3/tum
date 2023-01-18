@@ -1,18 +1,7 @@
 #ifndef BX_MEM_H
 #  define BX_MEM_H 1
 
-#if BX_USE_MEM_SMF
-// if static member functions on, then there is only one memory
-#  define BX_MEM_SMF  static
-#  define BX_MEM_THIS BX_MEM(0)->
-#else
-#  define BX_MEM_SMF
-#  define BX_MEM_THIS this->
-#endif
-
 class BX_CPU_C;
-
-#define BIOS_MAP_LAST128K(addr) (((addr) | 0xfff00000) & BIOS_MASK)
 
 class BOCHSAPI BX_MEM_C : public logfunctions {
 private:
@@ -29,35 +18,22 @@ public:
   BX_MEM_C();
  ~BX_MEM_C();
 
-  void    init_memory(Bit64u guest, Bit64u host, Bit32u block_size);
-  void    cleanup_memory(void);
-  Bit8u*  get_vector(bx_phy_address addr);
-
-  Bit8u*  getHostMemAddr(BX_CPU_C *cpu, bx_phy_address addr, unsigned rw);
+  void       init_memory(BX_CPU_C *cpu);
+  void       cleanup_memory(void);
+  Bit8u*     get_host_address(BX_CPU_C *cpu, bx_phy_address addr, unsigned rw);
+  bx_address allocate_host_memory(bx_address addr, unsigned len);
+  bool       query_host_memory(bx_address addr);
 
   // Note: accesses should always be contained within a single page
-  void    readPhysicalPage(BX_CPU_C *cpu, bx_phy_address addr,
-                                      unsigned len, void *data);
-  void    writePhysicalPage(BX_CPU_C *cpu, bx_phy_address addr,
-                                       unsigned len, void *data);
+  void read_physical_page(BX_CPU_C *cpu, bx_phy_address addr, unsigned len, void *data);
+  void write_physical_page(BX_CPU_C *cpu, bx_phy_address addr, unsigned len, void *data);
+
+  bx_address allocate_physical_page(bx_address addr, unsigned rw);
+  bx_address allocate_physical_pages(bx_address addr, Bit32u npages, unsigned rw);
 
   bool dbg_fetch_mem(BX_CPU_C *cpu, bx_phy_address addr, unsigned len, Bit8u *buf);
-#if (BX_DEBUGGER || BX_GDBSTUB)
-  bool dbg_set_mem(BX_CPU_C *cpu, bx_phy_address addr, unsigned len, Bit8u *buf);
-  bool dbg_crc32(bx_phy_address addr1, bx_phy_address addr2, Bit32u *crc);
-#endif
-
-  Bit64u  get_memory_len(void);
-  void allocate_block(Bit32u index);
-  Bit8u* alloc_vector_aligned(Bit64u bytes, Bit64u alignment);
-  bx_address allocate_page(BX_CPU_C* cpu, bx_address addr, unsigned rw);
 };
 
 BOCHSAPI extern BX_MEM_C bx_mem;
-
-BX_CPP_INLINE Bit64u BX_MEM_C::get_memory_len(void)
-{
-  return (BX_MEM_THIS len);
-}
 
 #endif

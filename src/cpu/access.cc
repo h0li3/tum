@@ -367,8 +367,7 @@ BX_CPU_C::system_read_qword(bx_address laddr)
     }
   }
 
-  if (access_read_linear(laddr, 8, 0, BX_READ, 0x0, (void *) &data) < 0)
-    exception(BX_GP_EXCEPTION, 0);
+  access_read_physical(laddr, 8, (void*)&data);
 
   return data;
 }

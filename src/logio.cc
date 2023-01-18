@@ -187,6 +187,7 @@ void iofunctions::out(int level, const char *prefix, const char *fmt, va_list ap
 
   s = logprefix;
   msgpfx[0] = 0;
+  tmpstr[0] = 0;
   while (*s) {
     switch (*s) {
       case '%':

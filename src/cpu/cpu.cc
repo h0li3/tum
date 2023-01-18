@@ -1,24 +1,3 @@
-/////////////////////////////////////////////////////////////////////////
-// $Id$
-/////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (C) 2001-2018  The Bochs Project
-//
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA B 02110-1301 USA
-/////////////////////////////////////////////////////////////////////////
-
 #define NEED_CPU_REG_SHORTCUTS 1
 #include "bochs.h"
 #include "cpu.h"
@@ -51,99 +30,59 @@ jmp_buf BX_CPU_C::jmp_buf_env;
 void BX_CPU_C::cpu_loop(void)
 {
 #if BX_DEBUGGER
-  BX_CPU_THIS_PTR break_point = 0;
-  BX_CPU_THIS_PTR magic_break = 0;
-  BX_CPU_THIS_PTR stop_reason = STOP_NO_REASON;
+    BX_CPU_THIS_PTR break_point = 0;
+    BX_CPU_THIS_PTR magic_break = 0;
+    BX_CPU_THIS_PTR stop_reason = STOP_NO_REASON;
 #endif
 
-  if (setjmp(BX_CPU_THIS_PTR jmp_buf_env)) {
-    // can get here only from exception function or VMEXIT
-    BX_CPU_THIS_PTR icount++;
+    if (setjmp(BX_CPU_THIS_PTR jmp_buf_env)) {
+        // can get here only from exception function or VMEXIT
+        BX_CPU_THIS_PTR icount++;
 #if BX_DEBUGGER || BX_GDBSTUB
-    if (dbg_instruction_epilog()) return;
+        if (dbg_instruction_epilog()) return;
 #endif
 #if BX_GDBSTUB
-    if (bx_dbg.gdbstub_enabled) return;
+        if (bx_dbg.gdbstub_enabled) return;
 #endif
-  }
+    }
 
-  // If the exception() routine has encountered a nasty fault scenario,
-  // the debugger may request that control is returned to it so that
-  // the situation may be examined.
+    // If the exception() routine has encountered a nasty fault scenario,
+    // the debugger may request that control is returned to it so that
+    // the situation may be examined.
 #if BX_DEBUGGER
-  if (bx_guard.interrupt_requested) return;
+    if (bx_guard.interrupt_requested) return;
 #endif
 
-  // We get here either by a normal function call, or by a longjmp
-  // back from an exception() call.  In either case, commit the
-  // new EIP/ESP, and set up other environmental fields.  This code
-  // mirrors similar code below, after the interrupt() call.
-  BX_CPU_THIS_PTR prev_rip = RIP; // commit new EIP
-  BX_CPU_THIS_PTR speculative_rsp = false;
+    // We get here either by a normal function call, or by a longjmp
+    // back from an exception() call.  In either case, commit the
+    // new EIP/ESP, and set up other environmental fields.  This code
+    // mirrors similar code below, after the interrupt() call.
+    BX_CPU_THIS_PTR prev_rip = RIP; // commit new EIP
+    BX_CPU_THIS_PTR speculative_rsp = false;
 
-  while (1) {
+    while (1) {
 
-    // check on events which occurred for previous instructions (traps)
-    // and ones which are asynchronous to the CPU (hardware interrupts)
-    if (BX_CPU_THIS_PTR async_event) {
-      if (handleAsyncEvent()) {
-        // If request to return to caller ASAP.
-        return;
-      }
-    }
+        bxICacheEntry_c* entry = getICacheEntry();
+        bxInstruction_c* i = entry->i;
 
-    bxICacheEntry_c *entry = getICacheEntry();
-    bxInstruction_c *i = entry->i;
+        bxInstruction_c* last = i + (entry->tlen);
 
-#if BX_SUPPORT_HANDLERS_CHAINING_SPEEDUPS
-    for(;;) {
-      // want to allow changing of the instruction inside instrumentation callback
-      RIP += i->ilen();
-      // when handlers chaining is enabled this single call will execute entire trace
-      BX_CPU_CALL_METHOD(i->execute1, (i)); // might iterate repeat instruction
+        for (;;) {
+            // want to allow changing of the instruction inside instrumentation callback
+            RIP += i->ilen();
+            BX_CPU_CALL_METHOD(i->execute1, (i)); // might iterate repeat instruction
+            BX_CPU_THIS_PTR prev_rip = RIP; // commit new RIP
+            BX_CPU_THIS_PTR icount++;
 
+            if (BX_CPU_THIS_PTR async_event) break;
 
-      if (BX_CPU_THIS_PTR async_event) break;
-
-      i = getICacheEntry()->i;
-    }
-#else // BX_SUPPORT_HANDLERS_CHAINING_SPEEDUPS == 0
-
-    bxInstruction_c *last = i + (entry->tlen);
-
-    for(;;) {
-
-#if BX_DEBUGGER
-      if (BX_CPU_THIS_PTR trace)
-        debug_disasm_instruction(BX_CPU_THIS_PTR prev_rip);
-#endif
-
-      // want to allow changing of the instruction inside instrumentation callback
-      RIP += i->ilen();
-      BX_CPU_CALL_METHOD(i->execute1, (i)); // might iterate repeat instruction
-      BX_CPU_THIS_PTR prev_rip = RIP; // commit new RIP
-      BX_CPU_THIS_PTR icount++;
-
-
-      // note instructions generating exceptions never reach this point
-#if BX_DEBUGGER || BX_GDBSTUB
-      if (dbg_instruction_epilog()) return;
-#endif
-
-      if (BX_CPU_THIS_PTR async_event) break;
-
-      if (++i == last) {
-        entry = getICacheEntry();
-        i = entry->i;
-        last = i + (entry->tlen);
-      }
-    }
-#endif
-
-    // clear stop trace magic indication that probably was set by repeat or branch32/64
-    BX_CPU_THIS_PTR async_event &= ~BX_ASYNC_EVENT_STOP_TRACE;
-
-  }  // while (1)
+            if (++i == last) {
+                entry = getICacheEntry();
+                i = entry->i;
+                last = i + (entry->tlen);
+            }
+        }
+    }  // while (1)
 }
 
 #if BX_SUPPORT_SMP
@@ -219,18 +158,6 @@ bxICacheEntry_c* BX_CPU_C::getICacheEntry(void)
     INC_ICACHE_STAT(iCacheMisses);
     entry = serveICacheMiss((Bit32u) eipBiased, pAddr);
   }
-
-#if BX_SUPPORT_CET
-  if (WaitingForEndbranch(CPL)) {
-    bxInstruction_c *i = entry->i;
-    if (i->getIaOpcode() != (long64_mode() ? BX_IA_ENDBRANCH64 : BX_IA_ENDBRANCH32) && i->getIaOpcode() != BX_IA_INT3) {
-      if (LegacyEndbranchTreatment(CPL)) {
-        BX_ERROR(("Endbranch is expected for CPL=%d", CPL));
-        exception(BX_CP_EXCEPTION, BX_CP_ENDBRANCH);
-      }
-    }
-  }
-#endif
 
   return entry;
 }
@@ -454,112 +381,98 @@ void BX_CPP_AttrRegparmN(2) BX_CPU_C::repeat_ZF(bxInstruction_c *i, BxRepIterati
   BX_CPU_THIS_PTR async_event |= BX_ASYNC_EVENT_STOP_TRACE;
 }
 
-// boundaries of consideration:
-//
-//  * physical memory boundary: 1024k (1Megabyte) (increments of...)
-//  * A20 boundary:             1024k (1Megabyte)
-//  * page boundary:            4k
-//  * ROM boundary:             2k (dont care since we are only reading)
-//  * segment boundary:         any
-
 void BX_CPU_C::prefetch(void)
 {
-  bx_address laddr;
-  unsigned pageOffset;
+    bx_address laddr;
+    unsigned pageOffset;
 
-  INC_ICACHE_STAT(iCachePrefetch);
+    INC_ICACHE_STAT(iCachePrefetch);
 
-  if (long64_mode()) {
-    if (! IsCanonical(RIP)) {
-      BX_ERROR(("prefetch: #GP(0): RIP crossed canonical boundary"));
-      exception(BX_GP_EXCEPTION, 0);
+    if (long64_mode()) {
+        if (!IsCanonical(RIP)) {
+            BX_ERROR(("prefetch: #GP(0): RIP crossed canonical boundary"));
+            exception(BX_GP_EXCEPTION, 0);
+        }
+
+        // linear address is equal to RIP in 64-bit long mode
+        pageOffset = PAGE_OFFSET(EIP);
+        laddr = RIP;
+
+        // Calculate RIP at the beginning of the page.
+        BX_CPU_THIS_PTR eipPageBias = pageOffset - RIP;
+        BX_CPU_THIS_PTR eipPageWindowSize = 4096;
     }
+    else {
+        BX_CLEAR_64BIT_HIGH(BX_64BIT_REG_RIP); /* avoid 32-bit EIP wrap */
+        laddr = get_laddr32(BX_SEG_REG_CS, EIP);
+        pageOffset = PAGE_OFFSET(laddr);
 
-    // linear address is equal to RIP in 64-bit long mode
-    pageOffset = PAGE_OFFSET(EIP);
-    laddr = RIP;
+        // Calculate RIP at the beginning of the page.
+        BX_CPU_THIS_PTR eipPageBias = (bx_address)pageOffset - EIP;
 
-    // Calculate RIP at the beginning of the page.
-    BX_CPU_THIS_PTR eipPageBias = pageOffset - RIP;
-    BX_CPU_THIS_PTR eipPageWindowSize = 4096;
-  }
-  else
-  {
-    BX_CLEAR_64BIT_HIGH(BX_64BIT_REG_RIP); /* avoid 32-bit EIP wrap */
-    laddr = get_laddr32(BX_SEG_REG_CS, EIP);
-    pageOffset = PAGE_OFFSET(laddr);
+        Bit32u limit = BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.limit_scaled;
+        if (EIP > limit) {
+            BX_ERROR(("prefetch: EIP [%08x] > CS.limit [%08x]", EIP, limit));
+            exception(BX_GP_EXCEPTION, 0);
+        }
 
-    // Calculate RIP at the beginning of the page.
-    BX_CPU_THIS_PTR eipPageBias = (bx_address) pageOffset - EIP;
-
-    Bit32u limit = BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.limit_scaled;
-    if (EIP > limit) {
-      BX_ERROR(("prefetch: EIP [%08x] > CS.limit [%08x]", EIP, limit));
-      exception(BX_GP_EXCEPTION, 0);
+        BX_CPU_THIS_PTR eipPageWindowSize = 4096;
+        if (limit + BX_CPU_THIS_PTR eipPageBias < 4096) {
+            BX_CPU_THIS_PTR eipPageWindowSize = (Bit32u)(limit + BX_CPU_THIS_PTR eipPageBias + 1);
+        }
     }
-
-    BX_CPU_THIS_PTR eipPageWindowSize = 4096;
-    if (limit + BX_CPU_THIS_PTR eipPageBias < 4096) {
-      BX_CPU_THIS_PTR eipPageWindowSize = (Bit32u)(limit + BX_CPU_THIS_PTR eipPageBias + 1);
-    }
-  }
 
 #if BX_X86_DEBUGGER
-  if (hwbreakpoint_check(laddr, BX_HWDebugInstruction, BX_HWDebugInstruction)) {
-    signal_event(BX_EVENT_CODE_BREAKPOINT_ASSIST);
-    if (! interrupts_inhibited(BX_INHIBIT_DEBUG)) {
-       // The next instruction could already hit a code breakpoint but
-       // async_event won't take effect immediatelly.
-       // Check if the next executing instruction hits code breakpoint
+    if (hwbreakpoint_check(laddr, BX_HWDebugInstruction, BX_HWDebugInstruction)) {
+        signal_event(BX_EVENT_CODE_BREAKPOINT_ASSIST);
+        if (!interrupts_inhibited(BX_INHIBIT_DEBUG)) {
+            // The next instruction could already hit a code breakpoint but
+            // async_event won't take effect immediatelly.
+            // Check if the next executing instruction hits code breakpoint
 
-       // check only if not fetching page cross instruction
-       // this check is 32-bit wrap safe as well
-       if (EIP == (Bit32u) BX_CPU_THIS_PTR prev_rip) {
-         Bit32u dr6_bits = code_breakpoint_match(laddr);
-         if (dr6_bits & BX_DEBUG_TRAP_HIT) {
-           BX_ERROR(("#DB: x86 code breakpoint caught"));
-           BX_CPU_THIS_PTR debug_trap |= dr6_bits;
-           exception(BX_DB_EXCEPTION, 0);
-         }
-       }
+            // check only if not fetching page cross instruction
+            // this check is 32-bit wrap safe as well
+            if (EIP == (Bit32u)BX_CPU_THIS_PTR prev_rip) {
+                Bit32u dr6_bits = code_breakpoint_match(laddr);
+                if (dr6_bits & BX_DEBUG_TRAP_HIT) {
+                    BX_ERROR(("#DB: x86 code breakpoint caught"));
+                    BX_CPU_THIS_PTR debug_trap |= dr6_bits;
+                    exception(BX_DB_EXCEPTION, 0);
+                }
+            }
+        }
     }
-  }
-  else {
-    clear_event(BX_EVENT_CODE_BREAKPOINT_ASSIST);
-  }
+    else {
+        clear_event(BX_EVENT_CODE_BREAKPOINT_ASSIST);
+    }
 #endif
 
-  BX_CPU_THIS_PTR clear_RF();
-  bx_address lpf = LPFOf(laddr);
-  bx_TLB_entry *tlbEntry = BX_ITLB_ENTRY_OF(laddr);
-  Bit8u *fetchPtr = 0;
+    BX_CPU_THIS_PTR clear_RF();
+    bx_address lpf = LPFOf(laddr);
+    bx_TLB_entry* tlbEntry = BX_ITLB_ENTRY_OF(laddr);
+    Bit8u* fetchPtr = 0;
 
-  if ((tlbEntry->lpf == lpf) && (tlbEntry->accessBits & (1 << unsigned(USER_PL))) != 0) {
-    BX_CPU_THIS_PTR pAddrFetchPage = tlbEntry->ppf;
-    fetchPtr = (Bit8u*) tlbEntry->hostPageAddr;
-  }
-  else {
-    bx_phy_address pAddr = translate_linear(tlbEntry, laddr, USER_PL, BX_EXECUTE);
-    BX_CPU_THIS_PTR pAddrFetchPage = PPFOf(pAddr);
-  }
-
-  if (fetchPtr) {
-    BX_CPU_THIS_PTR eipFetchPtr = fetchPtr;
-  }
-  else {
-    BX_CPU_THIS_PTR eipFetchPtr = (const Bit8u*) getHostMemAddr(BX_CPU_THIS_PTR pAddrFetchPage, BX_EXECUTE);
-
-    // Sanity checks
-    if (! BX_CPU_THIS_PTR eipFetchPtr) {
-      bx_phy_address pAddr = BX_CPU_THIS_PTR pAddrFetchPage + pageOffset;
-      if (pAddr >= BX_MEM(0)->get_memory_len()) {
-        BX_PANIC(("prefetch: running in bogus memory, pAddr=0x" FMT_PHY_ADDRX, pAddr));
-      }
-      else {
-        BX_PANIC(("prefetch: getHostMemAddr vetoed direct read, pAddr=0x" FMT_PHY_ADDRX, pAddr));
-      }
+    if ((tlbEntry->lpf == lpf) && (tlbEntry->accessBits & (1 << unsigned(USER_PL))) != 0) {
+        BX_CPU_THIS_PTR pAddrFetchPage = tlbEntry->ppf;
+        fetchPtr = (Bit8u*)tlbEntry->hostPageAddr;
     }
-  }
+    else {
+        bx_phy_address pAddr = translate_linear(tlbEntry, laddr, USER_PL, BX_EXECUTE);
+        BX_CPU_THIS_PTR pAddrFetchPage = PPFOf(pAddr);
+    }
+
+    if (fetchPtr) {
+        BX_CPU_THIS_PTR eipFetchPtr = fetchPtr;
+    }
+    else {
+        BX_CPU_THIS_PTR eipFetchPtr = (const Bit8u*)get_host_address(BX_CPU_THIS_PTR pAddrFetchPage, BX_EXECUTE);
+
+        // Sanity checks
+        if (!BX_CPU_THIS_PTR eipFetchPtr) {
+            bx_phy_address pAddr = BX_CPU_THIS_PTR pAddrFetchPage + pageOffset;
+            BX_PANIC(("prefetch: get_host_address vetoed direct read, pAddr=0x" FMT_PHY_ADDRX, pAddr));
+        }
+    }
 }
 
 #if BX_DEBUGGER || BX_GDBSTUB

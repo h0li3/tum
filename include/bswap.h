@@ -29,7 +29,11 @@ BX_CPP_INLINE Bit16u bx_bswap16(Bit16u val16)
 
 #if !defined(__MORPHOS__)
 #if BX_HAVE___BUILTIN_BSWAP32
+#ifdef _WIN32
+#define bx_bswap32 _byteswap_ulong
+#else
 #define bx_bswap32 __builtin_bswap32
+#endif
 #else
 BX_CPP_INLINE Bit32u bx_bswap32(Bit32u val32)
 {
@@ -39,7 +43,11 @@ BX_CPP_INLINE Bit32u bx_bswap32(Bit32u val32)
 #endif
 
 #if BX_HAVE___BUILTIN_BSWAP64
+#if _WIN32
+#define bx_bswap64 _byteswap_uint64
+#else
 #define bx_bswap64 __builtin_bswap64
+#endif
 #else
 BX_CPP_INLINE Bit64u bx_bswap64(Bit64u val64)
 {
