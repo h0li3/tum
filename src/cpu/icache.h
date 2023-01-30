@@ -50,8 +50,8 @@ public:
 
   BX_CPP_INLINE void markICache(bx_phy_address pAddr, unsigned len)
   {
-    Bit32u mask  = 1 << (PAGE_OFFSET((Bit32u) pAddr) >> 7);
-           mask |= 1 << (PAGE_OFFSET((Bit32u) pAddr + len - 1) >> 7);
+    Bit32u mask  = 1 << (PAGE_OFFSET(pAddr) >> 7);
+           mask |= 1 << (PAGE_OFFSET(pAddr + len - 1) >> 7);
 
     fineGranularityMapping[hash(pAddr)] |= mask;
   }
@@ -78,8 +78,8 @@ public:
     Bit32u index = hash(pAddr);
 
     if (fineGranularityMapping[index]) {
-       Bit32u mask  = 1 << (PAGE_OFFSET((Bit32u) pAddr) >> 7);
-              mask |= 1 << (PAGE_OFFSET((Bit32u) pAddr + len - 1) >> 7);
+       Bit32u mask  = 1 << (PAGE_OFFSET(pAddr) >> 7);
+              mask |= 1 << (PAGE_OFFSET(pAddr + len - 1) >> 7);
 
        if (fineGranularityMapping[index] & mask) {
           // one of the CPUs might be running trace from this page

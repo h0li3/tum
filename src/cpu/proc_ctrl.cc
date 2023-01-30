@@ -1,32 +1,10 @@
-/////////////////////////////////////////////////////////////////////////
-// $Id$
-/////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (C) 2001-2019  The Bochs Project
-//
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA B 02110-1301 USA
-//
-/////////////////////////////////////////////////////////////////////////
-
 #define NEED_CPU_REG_SHORTCUTS 1
 #include "bochs.h"
 #include "cpu.h"
-#define LOG_THIS BX_CPU_THIS_PTR
 
 #include "wide_int.h"
 #include "decoder/ia_opcodes.h"
+#include "system_service.h"
 
 void BX_CPP_AttrRegparmN(1) BX_CPU_C::BxError(bxInstruction_c *i)
 {
@@ -36,7 +14,7 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::BxError(bxInstruction_c *i)
     BX_DEBUG(("BxError: Encountered an unknown instruction (signalling #UD)"));
 
 #if BX_DEBUGGER == 0 // with debugger it easy to see the #UD
-    if (LOG_THIS getonoff(LOGLEV_DEBUG))
+    if (logger.getonoff(LOGLEV_DEBUG))
       debug_disasm_instruction(BX_CPU_THIS_PTR prev_rip);
 #endif
   }
@@ -943,69 +921,12 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::SYSCALL(bxInstruction_c *i)
 
   BX_DEBUG(("Execute SYSCALL instruction"));
 
-  if (!BX_CPU_THIS_PTR efer.get_SCE()) {
-    exception(BX_UD_EXCEPTION, 0);
-  }
-
   invalidate_prefetch_q();
-
-#if BX_SUPPORT_CET
-  unsigned old_CPL = CPL;
-#endif
 
 #if BX_SUPPORT_X86_64
   if (long_mode())
   {
-    RCX = RIP;
-    R11 = read_eflags() & ~(EFlagsRFMask);
-
-    if (BX_CPU_THIS_PTR cpu_mode == BX_MODE_LONG_64) {
-      temp_RIP = BX_CPU_THIS_PTR msr.lstar;
-    }
-    else {
-      temp_RIP = BX_CPU_THIS_PTR msr.cstar;
-    }
-
-    // set up CS segment, flat, 64-bit DPL=0
-    parse_selector((BX_CPU_THIS_PTR msr.star >> 32) & BX_SELECTOR_RPL_MASK,
-                       &BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].selector);
-
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.valid   = SegValidCache | SegAccessROK | SegAccessWOK | SegAccessROK4G | SegAccessWOK4G;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.p       = 1;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.dpl     = 0;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.segment = 1;  /* data/code segment */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.type    = BX_CODE_EXEC_READ_ACCESSED;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.base         = 0; /* base address */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.limit_scaled = 0xFFFFFFFF;  /* scaled segment limit */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.g            = 1; /* 4k granularity */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.d_b          = 0;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.l            = 1; /* 64-bit code */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.avl          = 0; /* available for use by system */
-
-    handleCpuModeChange(); // mode change could only happen when in long_mode()
-
-#if BX_SUPPORT_ALIGNMENT_CHECK
-    BX_CPU_THIS_PTR alignment_check_mask = 0; // CPL=0
-#endif
-
-    // set up SS segment, flat, 64-bit DPL=0
-    parse_selector(((BX_CPU_THIS_PTR msr.star >> 32) + 8) & BX_SELECTOR_RPL_MASK,
-                       &BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].selector);
-
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.valid   = SegValidCache | SegAccessROK | SegAccessWOK | SegAccessROK4G | SegAccessWOK4G;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.p       = 1;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.dpl     = 0;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.segment = 1; /* data/code segment */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.type    = BX_DATA_READ_WRITE_ACCESSED;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.u.segment.base         = 0; /* base address */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.u.segment.limit_scaled = 0xFFFFFFFF;  /* scaled segment limit */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.u.segment.g            = 1; /* 4k granularity */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.u.segment.d_b          = 1; /* 32 bit stack */
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.u.segment.l            = 0;
-    BX_CPU_THIS_PTR sregs[BX_SEG_REG_SS].cache.u.segment.avl          = 0; /* available for use by system */
-
-    writeEFlags(read_eflags() & ~(BX_CPU_THIS_PTR msr.fmask) & ~(EFlagsRFMask), EFlagsValidMask);
-    RIP = temp_RIP;
+      BxSystemService::CallSystemService64(this);
   }
   else
 #endif
@@ -1062,13 +983,6 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::SYSCALL(bxInstruction_c *i)
     BX_CPU_THIS_PTR clear_RF();
     RIP = temp_RIP;
   }
-
-#if BX_SUPPORT_CET
-  if (ShadowStackEnabled(old_CPL))
-    BX_CPU_THIS_PTR msr.ia32_pl_ssp[3] = SSP;
-  if (ShadowStackEnabled(0)) SSP = 0;
-  track_indirect(0);
-#endif
 
 #endif
 

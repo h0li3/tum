@@ -74,7 +74,7 @@ void BX_CPU_C::cpu_loop(void)
             BX_CPU_THIS_PTR prev_rip = RIP; // commit new RIP
             BX_CPU_THIS_PTR icount++;
 
-            if (BX_CPU_THIS_PTR async_event) break;
+            //if (BX_CPU_THIS_PTR async_event) break;
 
             if (++i == last) {
                 entry = getICacheEntry();

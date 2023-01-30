@@ -171,6 +171,12 @@
     <ClInclude Include="..\src\memory\memory-bochs.h">
       <Filter>src\memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\handlers.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\system_service.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\logio.cc">
@@ -590,10 +596,21 @@
     <ClCompile Include="..\src\memory\misc_mem.cc">
       <Filter>src\memory</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\handlers.cc">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\system_service.cc">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\cpu\decoder\ia_opcodes.def">
       <Filter>src\cpu\decoder</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\src\system_service_low.asm">
+      <Filter>src</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

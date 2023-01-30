@@ -49,7 +49,10 @@ extern int FPU_tagof(const floatx80 &reg);
 //
 struct BOCHSAPI_MSVCONLY i387_t
 {
-    i387_t() {}
+    i387_t()
+    {
+        init();
+    }
 
 public:
     void    init();        // used by FINIT/FNINIT instructions

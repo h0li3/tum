@@ -103,7 +103,7 @@ void iofunctions::init_log(const char *fn)
   if(strcmp(fn, "-") != 0) {
     newfd = fopen(fn, "w");
     if(newfd != NULL) {
-      newfn = strdup(fn);
+      newfn = _strdup(fn);
       log->ldebug("Opened log file '%s'.", fn);
     } else {
       // in constructor, genlog might not exist yet, so do it the safe way.
@@ -133,7 +133,7 @@ void iofunctions::init_log(int fd)
 {
   assert(magic==MAGIC_LOGNUM);
   FILE *tmpfd;
-  if((tmpfd = fdopen(fd,"w")) == NULL) {
+  if((tmpfd = _fdopen(fd,"w")) == NULL) {
     log->panic("Couldn't open fd %d as a stream for writing", fd);
     return;
   }
@@ -198,11 +198,11 @@ void iofunctions::out(int level, const char *prefix, const char *fmt, va_list ap
             sprintf(tmpstr, "%s", prefix==NULL?"":prefix);
             break;
           case 't':
-            //sprintf(tmpstr, FMT_TICK, bx_pc_system.time_ticks());
+            // sprintf(tmpstr, FMT_TICK, bx_pc_system.time_ticks());
             break;
           case 'i':
 #if BX_SUPPORT_SMP == 0
-            sprintf(tmpstr, "%08x", BX_CPU(0)->get_eip());
+            // sprintf(tmpstr, "%08x", BX_CPU(0)->get_eip());
 #endif
             break;
           case 'e':
@@ -321,7 +321,7 @@ void logfunctions::setio(iofunc_t *i)
 
 void logfunctions::put(const char *p)
 {
-  char *n = strdup(p);
+  char *n = _strdup(p);
 
   for (unsigned i=0; i<strlen(p); i++)
     n[i] = tolower(p[i]);
@@ -332,7 +332,7 @@ void logfunctions::put(const char *p)
 
 void logfunctions::put(const char *n, const char *p)
 {
-  char *tmpbuf=strdup(BX_NULL_PREFIX); // if we ever have more than 32 chars,
+  char *tmpbuf = _strdup(BX_NULL_PREFIX); // if we ever have more than 32 chars,
                                        // we need to rethink this
   if (tmpbuf == NULL)
     return;                         // allocation not successful
@@ -341,7 +341,7 @@ void logfunctions::put(const char *n, const char *p)
     free(name);             // free previously allocated memory
     name = NULL;
   }
-  name = strdup(n);
+  name = _strdup(n);
 
   if (prefix != NULL) {
     free(prefix);             // free previously allocated memory
@@ -550,7 +550,7 @@ void logfunctions::fatal1(const char *fmt, ...)
 void logfunctions::fatal(int level, const char *prefix, const char *fmt, va_list ap, int exit_status)
 {
   char tmpbuf[1024];
-  char exit_msg[1024+1];
+  //char exit_msg[1024+1];
 
   vsnprintf(tmpbuf, sizeof(tmpbuf), fmt, ap);
   va_end(ap);

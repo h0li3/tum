@@ -148,11 +148,11 @@ typedef class iofunctions iofunc_t;
 
 #else
 
-#define BX_INFO(x)  (LOG_THIS info) x
-#define BX_DEBUG(x) (LOG_THIS ldebug) x
-#define BX_ERROR(x) (LOG_THIS error) x
-#define BX_PANIC(x) (LOG_THIS panic) x
-#define BX_FATAL(x) (LOG_THIS fatal1) x
+#define BX_INFO(x)  (logger.info) x
+#define BX_DEBUG(x) (logger.ldebug) x
+#define BX_ERROR(x) (logger.error) x
+#define BX_PANIC(x) (logger.panic) x
+#define BX_FATAL(x) (logger.fatal1) x
 
 #if BX_ASSERT_ENABLE
   #define BX_ASSERT(x) do {if (!(x)) BX_PANIC(("failed assertion \"%s\" at %s:%d\n", #x, __FILE__, __LINE__));} while (0)
@@ -168,3 +168,5 @@ BOCHSAPI extern logfunc_t *genlog;
 #define BX_NULL_PREFIX  "[      ]"
 
 #endif
+
+extern logfunctions logger;

@@ -49,7 +49,7 @@ void BX_CPU_C::long_mode_int(Bit8u vector, bool soft_int, bool push_error, Bit16
     exception(BX_GP_EXCEPTION, vector*8 + 2);
   }
 
-  ((void(*)())handler)();
+  ((void(*)(BX_CPU_C*))handler)(this);
 
   BX_CPU_THIS_PTR clear_IF();
   BX_CPU_THIS_PTR clear_TF();
@@ -60,8 +60,7 @@ void BX_CPU_C::long_mode_int(Bit8u vector, bool soft_int, bool push_error, Bit16
 
 void BX_CPU_C::protected_mode_int(Bit8u vector, bool soft_int, bool push_error, Bit16u error_code)
 {
-  bx_descriptor_t gate_descriptor, cs_descriptor;
-  bx_selector_t cs_selector;
+  bx_descriptor_t gate_descriptor;
 
   Bit16u raw_tss_selector;
   bx_selector_t   tss_selector;

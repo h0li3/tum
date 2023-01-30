@@ -54,6 +54,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -102,6 +103,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -130,6 +132,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,9 +188,11 @@
     <ClInclude Include="..\src\cpu\tlb.h" />
     <ClInclude Include="..\src\cpu\wide_int.h" />
     <ClInclude Include="..\src\cpu\xmm.h" />
+    <ClInclude Include="..\src\handlers.h" />
     <ClInclude Include="..\src\logio.h" />
     <ClInclude Include="..\src\memory\memory-bochs.h" />
     <ClInclude Include="..\src\osdep.h" />
+    <ClInclude Include="..\src\system_service.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cpu\3dnow.cc" />
@@ -324,16 +329,22 @@
     <ClCompile Include="..\src\cpu\vm8086.cc" />
     <ClCompile Include="..\src\cpu\wide_int.cc" />
     <ClCompile Include="..\src\cpu\xsave.cc" />
+    <ClCompile Include="..\src\handlers.cc" />
     <ClCompile Include="..\src\logio.cc" />
     <ClCompile Include="..\src\main.cc" />
     <ClCompile Include="..\src\memory\memory.cc" />
     <ClCompile Include="..\src\memory\misc_mem.cc" />
     <ClCompile Include="..\src\osdep.cc" />
+    <ClCompile Include="..\src\system_service.cc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\cpu\decoder\ia_opcodes.def" />
+    <MASM Include="..\src\system_service_low.asm">
+      <FileType>Document</FileType>
+    </MASM>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>

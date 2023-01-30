@@ -235,7 +235,7 @@ const Bit64u BX_PAGING_PHY_ADDRESS_RESERVED_BITS = BX_PHY_ADDRESS_RESERVED_BITS 
 
 const Bit64u PAGE_DIRECTORY_NX_BIT = BX_CONST64(0x8000000000000000);
 
-const Bit64u BX_CR3_PAGING_MASK = BX_CONST64(0x000ffffffffff000);
+const Bit64u BX_CR3_PAGING_MASK = BX_CONST64(0xfffffffffffff000);
 
 // Each entry in the TLB cache has 3 entries:
 //
@@ -573,7 +573,7 @@ bool BX_CPP_AttrRegparmN(1) BX_CPU_C::CheckPDPTR(bx_phy_address cr3_val)
 
     for (n = 0; n < 4; n++) {
         // read and check PDPTE entries
-        bx_phy_address pdpe_entry_addr = (bx_phy_address)(cr3_val | (n << 3));
+        bx_phy_address pdpe_entry_addr = (bx_phy_address)(cr3_val | ((bx_phy_address)n << 3));
         access_read_physical(pdpe_entry_addr, 8, &(pdptr[n]));
 
         if (pdptr[n] & 0x1) {

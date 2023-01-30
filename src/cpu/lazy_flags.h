@@ -280,7 +280,7 @@ BX_CPP_INLINE unsigned bx_lazyflags_entry::get_SF(void) const { return getB_SF()
 BX_CPP_INLINE void bx_lazyflags_entry::set_SF(bool val)
 {
   bool temp_sf = getB_SF();
-  auxbits ^= (temp_sf ^ val) << LF_BIT_SD;
+  auxbits ^= ((bx_address)temp_sf ^ val) << LF_BIT_SD;
 }
 
 BX_CPP_INLINE void bx_lazyflags_entry::clear_SF  (void) { set_SF(0); }
@@ -312,7 +312,7 @@ BX_CPP_INLINE void bx_lazyflags_entry::assert_ZF(void)
 
   // merge the parity bits into the Parity Delta Byte
   Bit32u temp_pdb = (255 & result);
-  auxbits ^= (temp_pdb << LF_BIT_PDB);
+  auxbits ^= ((bx_address)temp_pdb << LF_BIT_PDB);
 
   // now zero the .result value
   result = 0;
@@ -334,7 +334,7 @@ BX_CPP_INLINE unsigned bx_lazyflags_entry::get_AF(void) const
 BX_CPP_INLINE void bx_lazyflags_entry::set_AF(bool val)
 {
   auxbits &= ~(LF_MASK_AF);
-  auxbits |= (val) << LF_BIT_AF;
+  auxbits |= ((bx_address)val) << LF_BIT_AF;
 }
 
 BX_CPP_INLINE void bx_lazyflags_entry::clear_AF(void)
@@ -364,7 +364,7 @@ BX_CPP_INLINE void bx_lazyflags_entry::set_PF(bool val)
 {
     Bit32u temp_pdb = (255 & result) ^ (!val);
     auxbits &= ~(LF_MASK_PDB);
-    auxbits |= (temp_pdb << LF_BIT_PDB);
+    auxbits |= ((bx_address)temp_pdb << LF_BIT_PDB);
 }
 
 BX_CPP_INLINE void bx_lazyflags_entry::clear_PF  (void) { set_PF(0); }

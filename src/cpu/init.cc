@@ -1,38 +1,19 @@
-/////////////////////////////////////////////////////////////////////////
-// $Id$
-/////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (C) 2001-2019  The Bochs Project
-//
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-//
-/////////////////////////////////////////////////////////////////////////
-
 #define NEED_CPU_REG_SHORTCUTS 1
 #include "bochs.h"
 #include "cpu.h"
-#define LOG_THIS BX_CPU_THIS_PTR
 
 #include "cpustats.h"
 
+#include "handlers.h"
+
 #include <stdlib.h>
 
-BX_CPU_C::BX_CPU_C(unsigned id): bx_cpuid(id)
-#if BX_CPU_LEVEL >= 4
-     , cpuid(NULL)
-#endif
+BX_CPU_C::BX_CPU_C(unsigned id)
+    : bx_cpuid(id),
+    eflags(0),
+    idtr(),
+    eipPageBias(0),
+    last_exception_type(0)
 {
     // in case of SMF, you cannot reference any member data
     // in the constructor because the only access to it is via
@@ -40,7 +21,7 @@ BX_CPU_C::BX_CPU_C(unsigned id): bx_cpuid(id)
     char name[16], logname[16];
     sprintf(name, "CPU%x", bx_cpuid);
     sprintf(logname, "cpu%x", bx_cpuid);
-    put(logname, name);
+    logger.put(logname, name);
 
     for (unsigned n=0;n<BX_ISA_EXTENSIONS_ARRAY_SIZE;n++)
       ia_extensions_bitmask[n] = 0;
@@ -51,7 +32,7 @@ BX_CPU_C::BX_CPU_C(unsigned id): bx_cpuid(id)
 
     stats = NULL;
 
-    srand(time(NULL)); // initialize random generator for RDRAND/RDSEED
+    srand((unsigned)time(NULL)); // initialize random generator for RDRAND/RDSEED
 }
 
 static bx_cpuid_t *cpuid_factory(BX_CPU_C *cpu)
@@ -62,12 +43,15 @@ static bx_cpuid_t *cpuid_factory(BX_CPU_C *cpu)
 // BX_CPU_C constructor
 void BX_CPU_C::initialize(void)
 {
-    bx_cpu.efer.set_NXE(0);
-	bx_cpu.efer.set_LME(1); // Enable long mode
-    bx_cpu.efer.set_LMA(1); // Activate long mode
-    bx_cpu.cpu_mode = BX_MODE_LONG_64; // default mode is long64
+    efer.set_NXE(0);
+	efer.set_LME(1); // Enable long mode
+    efer.set_LMA(1); // Activate long mode
+    cpu_mode = BX_MODE_LONG_64; // default mode is long64
 
     init_FetchDecodeTables(); // must be called after init_isa_features_bitmask()
+
+	idtr.limit = 32 * 8;
+	idtr.base = (bx_address)InterruptHandlers::handlers;
 
 #if BX_CPU_LEVEL >= 6
     xsave_xrestor_init();
@@ -76,14 +60,6 @@ void BX_CPU_C::initialize(void)
 
 BX_CPU_C::~BX_CPU_C()
 {
-#if BX_CPU_LEVEL >= 4
-    delete cpuid;
-#endif
-
-#if InstrumentCPU
-    delete stats;
-#endif
-
     BX_DEBUG(("Exit."));
 }
 
@@ -434,12 +410,6 @@ void BX_CPU_C::reset(unsigned source)
 #endif
 
     handleCpuContextChange();
-
-#if BX_CPU_LEVEL >= 4
-    BX_CPU_THIS_PTR cpuid->dump_cpuid();
-
-    BX_CPU_THIS_PTR cpuid->dump_features();
-#endif
 }
 
 void BX_CPU_C::sanity_checks(void)
@@ -510,13 +480,13 @@ void BX_CPU_C::sanity_checks(void)
     ESI = esi;
     EDI = edi;
 
-    if (sizeof(Bit8u)  != 1  ||  sizeof(Bit8s)  != 1)
+    if (sizeof(Bit8u) != 1)
       BX_PANIC(("data type Bit8u or Bit8s is not of length 1 byte!"));
-    if (sizeof(Bit16u) != 2  ||  sizeof(Bit16s) != 2)
+    if (sizeof(Bit16u) != 2)
       BX_PANIC(("data type Bit16u or Bit16s is not of length 2 bytes!"));
-    if (sizeof(Bit32u) != 4  ||  sizeof(Bit32s) != 4)
+    if (sizeof(Bit32u) != 4)
       BX_PANIC(("data type Bit32u or Bit32s is not of length 4 bytes!"));
-    if (sizeof(Bit64u) != 8  ||  sizeof(Bit64s) != 8)
+    if (sizeof(Bit64u) != 8)
       BX_PANIC(("data type Bit64u or Bit64u is not of length 8 bytes!"));
 
     if (sizeof(void*) != sizeof(bx_ptr_equiv_t))

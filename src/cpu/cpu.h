@@ -760,9 +760,9 @@ struct bx_cpu_statistics;
 
 #include "cpuid.h"
 
-class BOCHSAPI BX_CPU_C : public logfunctions {
+class BOCHSAPI BX_CPU_C {
 
-public: // for now...
+public:
 
     unsigned bx_cpuid;
 
@@ -809,9 +809,6 @@ public: // for now...
     // each fetch/execute cycle.
     bx_address prev_rip;
     bx_address prev_rsp;
-#if BX_SUPPORT_CET
-    bx_address prev_ssp;
-#endif
     bool    speculative_rsp;
 
     Bit64u icount;
@@ -900,10 +897,6 @@ public: // for now...
 
 #if BX_SUPPORT_MONITOR_MWAIT
     monitor_addr_t monitor;
-#endif
-
-#if BX_SUPPORT_APIC
-    bx_local_apic_c lapic;
 #endif
 
     /* SMM base register */
@@ -1162,9 +1155,6 @@ public: // for now...
     ~BX_CPU_C();
 
     void initialize(void);
-    void init_statistics(void);
-    void after_restore_state(void);
-    void register_state(void);
 
     // <TAG-CLASS-CPU-START>
       // prototypes for CPU instructions...

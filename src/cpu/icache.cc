@@ -40,22 +40,26 @@ extern int assignHandler(bxInstruction_c *i, Bit32u fetchModeMask);
 
 void flushICaches(void)
 {
+    /*
   for (unsigned i=0; i<BX_SMP_PROCESSORS; i++) {
     BX_CPU(i)->iCache.flushICacheEntries();
     BX_CPU(i)->async_event |= BX_ASYNC_EVENT_STOP_TRACE;
   }
+  */
 
   pageWriteStampTable.resetWriteStamps();
 }
 
 void handleSMC(bx_phy_address pAddr, Bit32u mask)
 {
+    /*
   INC_SMC_STAT(smc);
 
   for (unsigned i=0; i<BX_SMP_PROCESSORS; i++) {
     BX_CPU(i)->async_event |= BX_ASYNC_EVENT_STOP_TRACE;
     BX_CPU(i)->iCache.handleSMC(pAddr, mask);
   }
+  */
 }
 
 #if BX_SUPPORT_HANDLERS_CHAINING_SPEEDUPS
