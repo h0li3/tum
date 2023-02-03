@@ -1682,28 +1682,6 @@ void BX_CPU_C::xsave_xrestor_init(void)
     xsave_restore[xcr0_t::BX_XCR0_PKRU_BIT].xrstor_init_method = &BX_CPU_C::xrstor_init_pkru_state;
   }
 #endif
-
-  // XCR0[10]: Reserved
-
-#if BX_SUPPORT_CET
-  if (BX_CPUID_SUPPORT_ISA_EXTENSION(BX_ISA_CET)) {
-    // XCR0[11]: CET User State
-    xsave_restore[xcr0_t::BX_XCR0_CET_U_BIT].len    = XSAVE_CET_U_STATE_LEN;
-    xsave_restore[xcr0_t::BX_XCR0_CET_U_BIT].offset = 0;    // IA32_XSS only
-    xsave_restore[xcr0_t::BX_XCR0_CET_U_BIT].xstate_in_use_method = &BX_CPU_C::xsave_cet_u_state_xinuse;
-    xsave_restore[xcr0_t::BX_XCR0_CET_U_BIT].xsave_method = &BX_CPU_C::xsave_cet_u_state;
-    xsave_restore[xcr0_t::BX_XCR0_CET_U_BIT].xrstor_method = &BX_CPU_C::xrstor_cet_u_state;
-    xsave_restore[xcr0_t::BX_XCR0_CET_U_BIT].xrstor_init_method = &BX_CPU_C::xrstor_init_cet_u_state;
-
-    // XCR0[12]: CET Supervisor State
-    xsave_restore[xcr0_t::BX_XCR0_CET_S_BIT].len    = XSAVE_CET_S_STATE_LEN;
-    xsave_restore[xcr0_t::BX_XCR0_CET_S_BIT].offset = 0;    // IA32_XSS only
-    xsave_restore[xcr0_t::BX_XCR0_CET_S_BIT].xstate_in_use_method = &BX_CPU_C::xsave_cet_s_state_xinuse;
-    xsave_restore[xcr0_t::BX_XCR0_CET_S_BIT].xsave_method = &BX_CPU_C::xsave_cet_s_state;
-    xsave_restore[xcr0_t::BX_XCR0_CET_S_BIT].xrstor_method = &BX_CPU_C::xrstor_cet_s_state;
-    xsave_restore[xcr0_t::BX_XCR0_CET_S_BIT].xrstor_init_method = &BX_CPU_C::xrstor_init_cet_s_state;
-  }
-#endif
 }
 
 Bit32u BX_CPU_C::get_xcr0_allow_mask(void)
@@ -1717,10 +1695,6 @@ Bit32u BX_CPU_C::get_xcr0_allow_mask(void)
     allowMask |= BX_XCR0_OPMASK_MASK | BX_XCR0_ZMM_HI256_MASK | BX_XCR0_HI_ZMM_MASK;
 #endif
 #endif // BX_SUPPORT_AVX
-#if BX_SUPPORT_PKEYS
-  if (BX_CPUID_SUPPORT_ISA_EXTENSION(BX_ISA_PKU))
-    allowMask |= BX_XCR0_PKRU_MASK;
-#endif
 
   return allowMask;
 }
@@ -1728,9 +1702,6 @@ Bit32u BX_CPU_C::get_xcr0_allow_mask(void)
 Bit32u BX_CPU_C::get_ia32_xss_allow_mask(void)
 {
   Bit32u ia32_xss_support_mask = 0;
-#if BX_SUPPORT_CET
-         ia32_xss_support_mask |= BX_XCR0_CET_U_MASK | BX_XCR0_CET_S_MASK;
-#endif
   return ia32_xss_support_mask;
 }
 

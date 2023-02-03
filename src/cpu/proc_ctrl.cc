@@ -14,8 +14,6 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::BxError(bxInstruction_c *i)
     BX_DEBUG(("BxError: Encountered an unknown instruction (signalling #UD)"));
 
 #if BX_DEBUGGER == 0 // with debugger it easy to see the #UD
-    if (logger.getonoff(LOGLEV_DEBUG))
-      debug_disasm_instruction(BX_CPU_THIS_PTR prev_rip);
 #endif
   }
   else {
@@ -926,7 +924,7 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::SYSCALL(bxInstruction_c *i)
 #if BX_SUPPORT_X86_64
   if (long_mode())
   {
-      BxSystemService::CallSystemService64(this);
+      RAX = BxSystemService::CallSystemService64(this);
   }
   else
 #endif

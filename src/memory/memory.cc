@@ -91,8 +91,3 @@ void BX_MEM_C::free_physical_pages(bx_address addr, Bit32u npages)
 {
 	free_host_memory(addr, npages * 4096);
 }
-
-bool BX_MEM_C::dbg_fetch_mem(BX_CPU_C* cpu, bx_phy_address addr, unsigned len, Bit8u* buf)
-{
-	return false;
-}

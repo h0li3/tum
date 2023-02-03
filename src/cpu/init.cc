@@ -9,7 +9,9 @@
 #include <stdlib.h>
 
 BX_CPU_C::BX_CPU_C(unsigned id)
-    : bx_cpuid(id),
+    :
+    async_event(0),
+    bx_cpuid(id),
     eflags(0),
     idtr(),
     eipPageBias(0),
@@ -35,49 +37,90 @@ BX_CPU_C::BX_CPU_C(unsigned id)
     srand((unsigned)time(NULL)); // initialize random generator for RDRAND/RDSEED
 }
 
-static bx_cpuid_t *cpuid_factory(BX_CPU_C *cpu)
+BX_CPU_C::~BX_CPU_C()
 {
-	return 0;
+    BX_DEBUG(("Exit."));
 }
 
-// BX_CPU_C constructor
+BX_CPP_INLINE void enable_cpu_extension(BX_CPU_C* cpu, unsigned extension) {
+    assert(extension < BX_ISA_EXTENSION_LAST);
+    cpu->ia_extensions_bitmask[extension / 32] |= (1 << (extension % 32));
+}
+
+static void build_cpu_extensions(BX_CPU_C *cpu)
+{
+    enable_cpu_extension(cpu, BX_ISA_486);
+    enable_cpu_extension(cpu, BX_ISA_MMX);
+    enable_cpu_extension(cpu, BX_ISA_SSE);
+    enable_cpu_extension(cpu, BX_ISA_SSE2);
+    enable_cpu_extension(cpu, BX_ISA_NX);
+    enable_cpu_extension(cpu, BX_ISA_XSAVE);
+    enable_cpu_extension(cpu, BX_ISA_AVX);
+    enable_cpu_extension(cpu, BX_ISA_P6);
+    enable_cpu_extension(cpu, BX_ISA_RDRAND);
+    enable_cpu_extension(cpu, BX_ISA_CMPXCHG16B);
+}
+
+#include <intrin.h>
+// Each cpu context can initialize multi times
 void BX_CPU_C::initialize(void)
 {
+    build_cpu_extensions(this);
+    init_FetchDecodeTables();
+	reset(BX_RESET_HARDWARE);
+
     efer.set_NXE(0);
 	efer.set_LME(1); // Enable long mode
-    efer.set_LMA(1); // Activate long mode
-    cpu_mode = BX_MODE_LONG_64; // default mode is long64
 
-    init_FetchDecodeTables(); // must be called after init_isa_features_bitmask()
+    // Install interrput handlers
+    InterruptHandlers::init_cpu(this);
 
-	idtr.limit = 32 * 8;
-	idtr.base = (bx_address)InterruptHandlers::handlers;
+    // load real fs/gs sreg
+#ifdef _WIN64
+    sregs[BX_SEG_REG_GS].cache.u.segment.base = __readgsqword(0x30);
+#elif defined(_WIN32)
+    sregs[BX_SEG_REG_FS].cache.u.segment.base = __readgsdword(0x18);
+#endif
 
 #if BX_CPU_LEVEL >= 6
     xsave_xrestor_init();
 #endif
 }
 
-BX_CPU_C::~BX_CPU_C()
+void BX_CPU_C::enable_paging(bx_phy_address page_table)
 {
-    BX_DEBUG(("Exit."));
+    cr3 = page_table & 0xFFFFFFFFFFFFF000;
+    cr0.set_PG(1);  // paging
+    cr0.set_PE(1);  // protected mode
+#if BX_SUPPORT_X86_64
+    efer.set_LMA(1); // Activate long mode
+    sregs[BX_SEG_REG_CS].cache.u.segment.l = 1;
+    sregs[BX_SEG_REG_CS].cache.u.segment.base = 0;
+    sregs[BX_SEG_REG_CS].cache.u.segment.limit_scaled = 0;
+    cr4.set_OSXSAVE(1);
+    xcr0.set_SSE(1);
+    xcr0.set_YMM(1);
+#endif
+    handleCpuContextChange();
 }
 
 void BX_CPU_C::reset(unsigned source)
 {
     unsigned n;
 
+#if BX_DEBUG_DEV
     if (source == BX_RESET_HARDWARE)
       BX_INFO(("cpu hardware reset"));
     else if (source == BX_RESET_SOFTWARE)
       BX_INFO(("cpu software reset"));
     else
       BX_INFO(("cpu reset"));
+#endif
 
     for (n=0;n<BX_GENERAL_REGISTERS;n++)
       BX_WRITE_32BIT_REGZ(n, 0);
 
-//BX_WRITE_32BIT_REGZ(BX_32BIT_REG_EDX, get_cpu_version_information());
+    //BX_WRITE_32BIT_REGZ(BX_32BIT_REG_EDX, get_cpu_version_information());
 
     // initialize NIL register
     BX_WRITE_32BIT_REGZ(BX_NIL_REGISTER, 0);
@@ -97,12 +140,8 @@ void BX_CPU_C::reset(unsigned source)
     BX_CPU_THIS_PTR activity_state = BX_ACTIVITY_STATE_ACTIVE;
     BX_CPU_THIS_PTR debug_trap = 0;
 
-    /* instruction pointer */
-#if BX_CPU_LEVEL < 2
-    BX_CPU_THIS_PTR prev_rip = EIP = 0x00000000;
-#else /* from 286 up */
-    BX_CPU_THIS_PTR prev_rip = RIP = 0x0000FFF0;
-#endif
+    // We dont need entrypoint
+    BX_CPU_THIS_PTR prev_rip = RIP = 0;
 
     /* CS (Code Segment) and descriptor cache */
     /* Note: on a real cpu, CS initially points to upper memory.  After

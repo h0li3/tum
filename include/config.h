@@ -547,7 +547,6 @@ typedef Bit32u bx_phy_address;
 
 #endif
 
-#define BX_GDBSTUB 0
 #define BX_DEBUGGER 0
 #define BX_DEBUGGER_GUI 0
 
@@ -572,7 +571,7 @@ typedef Bit32u bx_phy_address;
 #define BX_SUPPORT_MEMTYPE 0
 #define BX_SUPPORT_SVM 0
 #define BX_SUPPORT_VMX 0
-#define BX_SUPPORT_AVX 0
+#define BX_SUPPORT_AVX 1
 #define BX_SUPPORT_EVEX 0
 
 #if BX_SUPPORT_SVM && BX_SUPPORT_X86_64 == 0

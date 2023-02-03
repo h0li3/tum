@@ -27,52 +27,6 @@
 
 #include "memory/memory-bochs.h"
 
-void BX_CPU_C::debug_disasm_instruction(bx_address offset)
-{
-#if BX_DEBUGGER
-  bx_dbg_disassemble_current(BX_CPU_ID, 1); // only one cpu, print time stamp
-#else
-  bx_phy_address phy_addr;
-  Bit8u  instr_buf[16];
-  char   char_buf[512];
-  size_t i=0;
-
-  static char letters[] = "0123456789ABCDEF";
-  unsigned remainsInPage = 0x1000 - PAGE_OFFSET(offset);
-
-  bool valid = dbg_xlate_linear2phy(get_laddr(BX_SEG_REG_CS, offset), &phy_addr);
-  if (valid) {
-    BX_MEM(0)->dbg_fetch_mem(BX_CPU_THIS, phy_addr, 16, instr_buf);
-
-    bxInstruction_c instr;
-    disasm(instr_buf,
-      BX_CPU_THIS_PTR sregs[BX_SEG_REG_CS].cache.u.segment.d_b,
-      BX_CPU_THIS_PTR cpu_mode == BX_MODE_LONG_64, char_buf+i, &instr,
-      BX_CPU_THIS_PTR get_segment_base(BX_SEG_REG_CS), offset, BX_DISASM_INTEL);
-    unsigned isize = instr.ilen();
-
-    if (isize <= remainsInPage) {
-      i=strlen(char_buf);
-      char_buf[i++] = ' ';
-      char_buf[i++] = ':';
-      char_buf[i++] = ' ';
-      for (unsigned j=0; j<isize; j++) {
-        char_buf[i++] = letters[(instr_buf[j] >> 4) & 0xf];
-        char_buf[i++] = letters[(instr_buf[j] >> 0) & 0xf];
-      }
-      char_buf[i] = 0;
-      BX_INFO(("0x" FMT_ADDRX ">> %s", offset, char_buf));
-    }
-    else {
-      BX_INFO(("0x" FMT_ADDRX ": (instruction unavailable) page split instruction", offset));
-    }
-  }
-  else {
-    BX_INFO(("0x" FMT_ADDRX ": (instruction unavailable) page not present", offset));
-  }
-#endif  // #if BX_DEBUGGER
-}
-
 const char* cpu_mode_string(unsigned cpu_mode)
 {
   static const char *cpu_mode_name[] = {
@@ -246,8 +200,6 @@ void BX_CPU_C::debug(bx_address offset)
       (unsigned) BX_CPU_THIS_PTR cr4.get32()));
 #endif
   }
-
-  debug_disasm_instruction(offset);
 }
 
 

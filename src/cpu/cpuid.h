@@ -53,13 +53,6 @@ public:
     return ia_extensions_bitmask[extension / 32] & (1 << (extension % 32));
   }
 
-#if BX_SUPPORT_VMX
-  virtual Bit32u get_vmx_extensions_bitmask(void) const { return 0; }
-#endif
-#if BX_SUPPORT_SVM
-  virtual Bit32u get_svm_extensions_bitmask(void) const { return 0; }
-#endif
-
   virtual void get_cpuid_leaf(Bit32u function, Bit32u subfunction, cpuid_function_t *leaf) const = 0;
 
   virtual void dump_cpuid(void) const = 0;
@@ -69,10 +62,6 @@ public:
 #if BX_CPU_LEVEL >= 5
   virtual int rdmsr(Bit32u index, Bit64u *msr) { return -1; }
   virtual int wrmsr(Bit32u index, Bit64u  msr) { return -1; }
-#endif
-
-#if BX_SUPPORT_VMX
-  VMCS_Mapping* get_vmcs() { return &vmcs_map; }
 #endif
 
 protected:
@@ -98,10 +87,6 @@ protected:
   void get_leaf_0(unsigned max_leaf, const char *vendor_string, cpuid_function_t *leaf, unsigned limited_max_leaf = 0x02) const;
   void get_ext_cpuid_brand_string_leaf(const char *brand_string, Bit32u function, cpuid_function_t *leaf) const;
   void get_cpuid_hidden_level(cpuid_function_t *leaf, const char *magic_string) const;
-
-#if BX_SUPPORT_APIC
-  void get_std_cpuid_extended_topology_leaf(Bit32u subfunction, cpuid_function_t *leaf) const;
-#endif
 
 #if BX_CPU_LEVEL >= 6
   void get_std_cpuid_xsave_leaf(Bit32u subfunction, cpuid_function_t *leaf) const;

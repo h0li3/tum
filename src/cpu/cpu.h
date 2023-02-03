@@ -1155,6 +1155,7 @@ public:
     ~BX_CPU_C();
 
     void initialize(void);
+    void enable_paging(bx_phy_address page_table);
 
     // <TAG-CLASS-CPU-START>
       // prototypes for CPU instructions...
@@ -4130,7 +4131,7 @@ public:
 #if BX_DEBUGGER || BX_GDBSTUB
     bool  dbg_instruction_epilog(void);
 #endif
-    bool  dbg_xlate_linear2phy(bx_address linear, bx_phy_address* phy, bx_address* lpf_mask = 0, bool verbose = 0, bool nested_walk = 0);
+    bool  dbg_xlate_linear2phy(bx_address linear, bx_phy_address* phy, Bit32u* lpf_mask = 0, bool verbose = 0, bool nested_walk = 0);
 #if BX_LARGE_RAMFILE
     bool check_addr_in_tlb_buffers(const Bit8u* addr, const Bit8u* end);
 #endif
@@ -4555,7 +4556,6 @@ public:
     void    deliver_SMI(void);
     void    deliver_SIPI(unsigned vector);
     void    debug(bx_address offset);
-    void    debug_disasm_instruction(bx_address offset);
 
 #if BX_X86_DEBUGGER
     // x86 hardware debug support

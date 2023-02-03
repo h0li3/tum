@@ -113,10 +113,6 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::CALL_Jq(bxInstruction_c *i)
 
   /* push 64 bit EA of next instruction */
   push_64(RIP);
-#if BX_SUPPORT_CET
-  if (ShadowStackEnabled(CPL) && i->Id())
-    shadow_stack_push_64(RIP);
-#endif
 
   if (! IsCanonical(new_RIP)) {
     BX_ERROR(("%s: canonical RIP violation", i->getIaOpcodeNameShort()));
@@ -144,10 +140,6 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::CALL_EqR(bxInstruction_c *i)
 
   /* push 64 bit EA of next instruction */
   push_64(RIP);
-#if BX_SUPPORT_CET
-  if (ShadowStackEnabled(CPL))
-    shadow_stack_push_64(RIP);
-#endif
 
   if (! IsCanonical(new_RIP))
   {
@@ -158,10 +150,6 @@ void BX_CPP_AttrRegparmN(1) BX_CPU_C::CALL_EqR(bxInstruction_c *i)
   RIP = new_RIP;
 
   RSP_COMMIT;
-
-#if BX_SUPPORT_CET
-  track_indirect_if_not_suppressed(i, CPL);
-#endif
 
   BX_INSTR_UCNEAR_BRANCH(BX_CPU_ID, BX_INSTR_IS_CALL_INDIRECT, PREV_RIP, RIP);
 

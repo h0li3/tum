@@ -31,7 +31,11 @@ public:
     void       free_physical_page(bx_address addr);
     void       free_physical_pages(bx_address addr, Bit32u npages);
 
+#if BX_GDBSTUB
+    bool dbg_set_mem(BX_CPU_C * cpu, bx_phy_address addr, unsigned len, Bit8u * buf);
+    bool dbg_crc32(bx_phy_address addr1, bx_phy_address addr2, Bit32u * crc);
     bool dbg_fetch_mem(BX_CPU_C* cpu, bx_phy_address addr, unsigned len, Bit8u* buf);
+#endif
 };
 
 BOCHSAPI extern BX_MEM_C bx_mem;

@@ -2556,12 +2556,14 @@ int assignHandler(bxInstruction_c *i, Bit32u fetchModeMask)
   }
 #endif
 #if BX_CPU_LEVEL >= 6
+  /*
   if (! (fetchModeMask & BX_FETCH_MODE_SSE_OK)) {
      if (op_flags & BX_PREPARE_SSE) {
         if (i->execute1 != &BX_CPU_C::BxError) i->execute1 = &BX_CPU_C::BxNoSSE;
         return(1);
      }
   }
+  */
 #if BX_SUPPORT_AVX
   if (! (fetchModeMask & BX_FETCH_MODE_AVX_OK)) {
     if (op_flags & BX_PREPARE_AVX) {
@@ -2672,7 +2674,11 @@ const char *get_bx_opcode_name(Bit16u ia_opcode)
 {
   static const char* BxOpcodeNamesTable[BX_IA_LAST] =
   {
+#if BX_DEBUG
 #define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g) #a,
+#else
+#define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g)
+#endif
 #include "ia_opcodes.def"
   };
 #undef  bx_define_opcode
@@ -2684,7 +2690,11 @@ const char *get_intel_disasm_opcode_name(Bit16u ia_opcode)
 {
   static const char* BxOpcodeNamesTable[BX_IA_LAST] =
   {
-#define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g) b,
+#if BX_DEBUG
+#define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g) #a,
+#else
+#define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g)
+#endif
 #include "ia_opcodes.def"
   };
 #undef  bx_define_opcode
@@ -2696,7 +2706,11 @@ const char *get_gas_disasm_opcode_name(Bit16u ia_opcode)
 {
   static const char* BxOpcodeNamesTable[BX_IA_LAST] =
   {
-#define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g) c,
+#if BX_DEBUG
+#define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g) #a,
+#else
+#define bx_define_opcode(a, b, c, d, e, f, s1, s2, s3, s4, g)
+#endif
 #include "ia_opcodes.def"
   };
 #undef  bx_define_opcode

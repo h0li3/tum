@@ -538,8 +538,7 @@ bx_phy_address BX_CPU_C::translate_linear_long_mode(bx_address laddr, Bit32u& lp
     bx_phy_address entry_addr;
     bx_phy_address ppf = BX_CPU_THIS_PTR cr3 & BX_CR3_PAGING_MASK;
     Bit64u entry;
-
-    lpf_mask = 0xfff;
+    Bit32u mask = 0xfff;
 
     for (leaf = BX_LEVEL_PML4; ; --leaf) {
         entry_addr = ppf + ((laddr >> (9 + 9 * leaf)) & 0xff8);
@@ -557,7 +556,11 @@ bx_phy_address BX_CPU_C::translate_linear_long_mode(bx_address laddr, Bit32u& lp
         }
     }
 
-    return ppf + (laddr & lpf_mask);
+    if (lpf_mask) {
+        lpf_mask = mask;
+    }
+
+    return ppf + (laddr & mask);
 }
 
 const Bit64u PAGING_PAE_PDPTE_RESERVED_BITS = BX_PAGING_PHY_ADDRESS_RESERVED_BITS | BX_CONST64(0xFFF00000000001E6);
@@ -736,137 +739,32 @@ bx_phy_address BX_CPU_C::translate_linear(bx_TLB_entry* tlbEntry, bx_address lad
     return paddress;
 }
 
-#if BX_DEBUGGER
-
-void dbg_print_paging_pte(int level, Bit64u entry)
-{
-    dbg_printf("%4s: 0x%08x%08x", bx_paging_level[level], GET32H(entry), GET32L(entry));
-
-    if (entry & BX_CONST64(0x8000000000000000))
-        dbg_printf(" XD");
-    else
-        dbg_printf("   ");
-
-    if (level == BX_LEVEL_PTE) {
-        dbg_printf("    %s %s %s",
-            (entry & 0x0100) ? "G" : "g",
-            (entry & 0x0080) ? "PAT" : "pat",
-            (entry & 0x0040) ? "D" : "d");
-    }
-    else {
-        if (entry & 0x80) {
-            dbg_printf(" PS %s %s %s",
-                (entry & 0x0100) ? "G" : "g",
-                (entry & 0x1000) ? "PAT" : "pat",
-                (entry & 0x0040) ? "D" : "d");
-        }
-        else {
-            dbg_printf(" ps        ");
-        }
-    }
-
-    dbg_printf(" %s %s %s %s %s %s\n",
-        (entry & 0x20) ? "A" : "a",
-        (entry & 0x10) ? "PCD" : "pcd",
-        (entry & 0x08) ? "PWT" : "pwt",
-        (entry & 0x04) ? "U" : "S",
-        (entry & 0x02) ? "W" : "R",
-        (entry & 0x01) ? "P" : "p");
-}
-
-#endif // BX_DEBUGGER
-
-bool BX_CPU_C::dbg_xlate_linear2phy(bx_address laddr, bx_phy_address* phy, bx_address* lpf_mask, bool verbose, bool nested_walk)
+bool BX_CPU_C::dbg_xlate_linear2phy(bx_address laddr, bx_phy_address* phy, Bit32u* lpf_mask, bool verbose, bool nested_walk)
 {
     bx_phy_address paddress;
-    bx_address offset_mask = 0xfff;
+    Bit32u offset_mask = 0xfff;
 
 #if BX_SUPPORT_X86_64
     if (!long_mode()) laddr &= 0xffffffff;
 #endif
 
-    if (!BX_CPU_THIS_PTR cr0.get_PG()) {
+    if (!BX_CPU_THIS_PTR cr0.get_PG()) {  // Not PG
         paddress = (bx_phy_address)laddr;
     }
-    else {
-        bx_phy_address pt_address = BX_CPU_THIS_PTR cr3 & BX_CR3_PAGING_MASK;
-
-#if BX_CPU_LEVEL >= 6
-        if (BX_CPU_THIS_PTR cr4.get_PAE()) {
-            offset_mask = BX_CONST64(0x0000ffffffffffff);
-
-            int level = 3;
-            if (!long_mode()) {
-                pt_address = BX_CPU_THIS_PTR PDPTR_CACHE.entry[(laddr >> 30) & 3];
-                if (!(pt_address & 0x1)) {
-                    offset_mask = 0x3fffffff;
-                    goto page_fault;
-                }
-                offset_mask >>= 18;
-                pt_address &= BX_CONST64(0x000ffffffffff000);
-                level = 1;
-            }
-
-            for (; level >= 0; --level) {
-                Bit64u pte;
-                pt_address += ((laddr >> (9 + 9 * level)) & 0xff8);
-                offset_mask >>= 9;
-                BX_MEM(0)->read_physical_page(BX_CPU_THIS, pt_address, 8, &pte);
-#if BX_DEBUGGER
-                if (verbose)
-                    dbg_print_paging_pte(level, pte);
+    else {  // PG
+#if BX_SUPPORT_X86_64
+        //paddress = translate_linear_long_mode(laddr, *lpf_mask, 1, 0);
+#else
+        //paddress = translate_linear_lagency_mode(laddr, *lpf_mask, 1, 0);
 #endif
-                if (!(pte & 1))
-                    goto page_fault;
-                if (pte & BX_PAGING_PHY_ADDRESS_RESERVED_BITS)
-                    goto page_fault;
-                pt_address = bx_phy_address(pte & BX_CONST64(0x000ffffffffff000));
-                if (level == BX_LEVEL_PTE) break;
-                if (pte & 0x80) {
-                    // large page
-                    pt_address &= BX_CONST64(0x000fffffffffe000);
-                    if (pt_address & offset_mask)
-                        goto page_fault;
-                    if (is_cpu_extension_supported(BX_ISA_1G_PAGES) && level == BX_LEVEL_PDPTE) break;
-                    if (level == BX_LEVEL_PDE) break;
-                    goto page_fault;
-                }
-            }
-            paddress = pt_address + (bx_phy_address)(laddr & offset_mask);
-        }
-        else   // not PAE
-#endif
-        {
-            offset_mask = 0xfff;
-            for (int level = 1; level >= 0; --level) {
-                Bit32u pte;
-                pt_address += ((laddr >> (10 + 10 * level)) & 0xffc);
-                BX_MEM(0)->read_physical_page(BX_CPU_THIS, pt_address, 4, &pte);
-#if BX_DEBUGGER
-                if (verbose)
-                    dbg_print_paging_pte(level, pte);
-#endif
-                if (!(pte & 1))
-                    goto page_fault;
-                pt_address = pte & 0xfffff000;
-#if BX_CPU_LEVEL >= 6
-                if (level == BX_LEVEL_PDE && (pte & 0x80) != 0 && BX_CPU_THIS_PTR cr4.get_PSE()) {
-                    offset_mask = 0x3fffff;
-                    pt_address = pte & 0xffc00000;
-#if BX_PHY_ADDRESS_WIDTH > 32
-                    pt_address += ((bx_phy_address)(pte & 0x003fe000)) << 19;
-#endif
-                    break;
-                }
-#endif
-            }
-            paddress = pt_address + (bx_phy_address)(laddr & offset_mask);
-        }
+        paddress = laddr;
     }
 
-    if (lpf_mask)
-        *lpf_mask = offset_mask;
-    *phy = (bx_phy_address)(paddress);
+    if (!paddress) {
+        goto page_fault;
+    }
+
+    *phy = (bx_phy_address)paddress;
     return 1;
 
 page_fault:

@@ -1879,9 +1879,6 @@ int fetchDecode64(const Bit8u *iptr, bxInstruction_c *i, unsigned remainingInPag
   unsigned b1;
   int ia_opcode = BX_IA_ERROR;
   unsigned seg_override = BX_SEG_REG_NULL;
-#if BX_SUPPORT_CET
-  unsigned seg_override_cet = BX_SEG_REG_NULL;
-#endif
   bool lock = 0;
   unsigned sse_prefix = SSE_PREFIX_NONE;
   unsigned rex_prefix = 0;
@@ -1894,13 +1891,6 @@ int fetchDecode64(const Bit8u *iptr, bxInstruction_c *i, unsigned remainingInPag
 fetch_b1:
   b1 = *iptr++;
   remain--;
-
-#if BX_SUPPORT_CET
-  // in 64-bit mode DS prefix is ignored but still recorded for CET Endranch suppress hint
-  // keep it even if overridden by FS: or GS:
-  if (b1 == 0x3e)
-    seg_override_cet = BX_SEG_REG_DS;
-#endif
 
   switch (b1) {
     case 0x40:
@@ -2035,7 +2025,7 @@ fetch_b1:
       }
       else {
         // replace execution function with undefined-opcode
-        i->setIaOpcode(BX_IA_ERROR);
+        //i->setIaOpcode(BX_IA_ERROR);
       }
     }
   }

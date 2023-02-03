@@ -602,6 +602,9 @@
     <ClCompile Include="..\src\system_service.cc">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\gdbstub.cc">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\cpu\decoder\ia_opcodes.def">

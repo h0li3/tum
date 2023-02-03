@@ -205,11 +205,10 @@ Bit32u crc32(const Bit8u *buf, int len);
 
 #define FMT_LIN_ADDRX FMT_ADDRX
 
-#if BX_GDBSTUB
 // defines for GDB stub
 void bx_gdbstub_init(void);
 void bx_gdbstub_break(void);
-int bx_gdbstub_check(unsigned int eip);
+int bx_gdbstub_check(bx_address addr);
 #define GDBSTUB_STOP_NO_REASON   (0xac0)
 
 #if BX_SUPPORT_SMP
@@ -217,7 +216,6 @@ int bx_gdbstub_check(unsigned int eip);
 // The big problem is knowing which CPU gdb is referring to.  In other words,
 // what should we put for "n" in BX_CPU(n)->dbg_xlate_linear2phy() and
 // BX_CPU(n)->dword.eip, etc.
-#endif
 #endif
 
 typedef struct {

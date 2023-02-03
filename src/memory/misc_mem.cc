@@ -46,3 +46,46 @@ bool BX_MEM_C::query_host_memory(bx_address addr)
     return false;
 }
 
+#if BX_GDBSTUB
+bool BX_MEM_C::dbg_set_mem(BX_CPU_C* cpu, bx_phy_address addr, unsigned len, Bit8u* buf)
+{
+    __try {
+        memcpy((void*)addr, buf, len);
+        return true;
+    }
+    _except(1) {
+        return false;
+    }
+}
+
+bool BX_MEM_C::dbg_fetch_mem(BX_CPU_C* cpu, bx_phy_address addr, unsigned len, Bit8u* buf)
+{
+    _try{
+		memcpy(buf, (void*)addr, len);
+		return true;
+    }
+    _except (1) {
+	    return false;
+    }
+}
+
+bool BX_MEM_C::dbg_crc32(bx_phy_address addr1, bx_phy_address addr2, Bit32u* crc)
+{
+    *crc = 0;
+    if (addr1 > addr2)
+        return(0);
+
+    unsigned len = 1 + (Bit32u)(addr2 - addr1);
+
+    // do not cross 4K boundary
+    while (1) {
+        unsigned remainsInPage = 0x1000 - (addr1 & 0xfff);
+        unsigned access_length = (len < remainsInPage) ? len : remainsInPage;
+        //*crc = crc32((const Bit8u*)addr1, access_length);
+        addr1 += access_length;
+        len -= access_length;
+    }
+
+    return 1;
+}
+#endif

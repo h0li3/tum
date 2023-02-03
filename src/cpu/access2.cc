@@ -433,7 +433,6 @@ BX_CPU_C::read_linear_qword(unsigned s, bx_address laddr)
       bx_hostpageaddr_t hostPageAddr = tlbEntry->hostPageAddr;
       Bit32u pageOffset = PAGE_OFFSET(laddr);
       Bit64u *hostAddr = (Bit64u*) (hostPageAddr | pageOffset);
-		printf("host addr %p\n", hostAddr);
       data = ReadHostQWordFromLittleEndian(hostAddr);
       BX_NOTIFY_LIN_MEMORY_ACCESS(laddr, (tlbEntry->ppf | pageOffset), 8, tlbEntry->get_memtype(), BX_READ, (Bit8u*) &data);
       return data;
